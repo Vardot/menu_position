@@ -72,7 +72,7 @@ function menu_position_schema() {
 /**
  * Set the initial database schema ID.
  */
-function menu_position_update_7100() {
+function menu_position_update_6100() {
   // No-op.
 }
 
@@ -97,4 +97,18 @@ function menu_position_enable() {
       ->condition('rid', $rule->rid)
       ->execute();
   }
+}
+
+/**
+ * Implements hook_install().
+ */
+function menu_position_install() {
+  drupal_install_schema('menu_position');
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function menu_position_uninstall() {
+  drupal_uninstall_schema('menu_position');
 }
