@@ -71,8 +71,8 @@ function menu_position_router() {
  */
 function _menu_position_form_menu_overview_form_alter(&$form, &$form_state) {
   // Retrieve all of the rules' mlids.
-  $rules = db_query('SELECT mlid FROM {menu_position_rules} WHERE enabled = :enabled ORDER BY weight, rid', array(':enabled' => 1));
-  foreach ($rules as $rule) {
+  $rules = db_query('SELECT mlid FROM {menu_position_rules} WHERE enabled = 1 ORDER BY weight, rid');
+  while ($rule = db_fetch_object($rules)) {
     $mlid = $rule->mlid;
     if (!empty($form['mlid:' . $mlid]['#item']['mlid']) && $mlid == $form['mlid:' . $mlid]['#item']['mlid']) {
       // Ensure that the menu item cannot be enabled.
@@ -88,8 +88,8 @@ function _menu_position_form_menu_overview_form_alter(&$form, &$form_state) {
  */
 function _menu_position_form_menu_edit_item_alter(&$form, &$form_state) {
   // Retrieve all of the rules' mlids.
-  $result = db_query('SELECT mlid FROM {menu_position_rules} WHERE mlid = :mlid ORDER BY weight, rid', array(':mlid' => (int) $form['mlid']['#value']));
-  if ($result->rowCount()) {
+  $mlid = db_result(db_query('SELECT mlid FROM {menu_position_rules} WHERE mlid = %d ORDER BY weight, rid', (int) $form['mlid']['#value']));
+  if ($mlid !== FALSE) {
     // If the form hasn't been submitted, display a warning.
     if (empty($form_state['input'])) {
       drupal_set_message(t('This menu item cannot be edited.'), 'warning');
@@ -121,18 +121,18 @@ function _menu_position_form_menu_edit_item_alter(&$form, &$form_state) {
  * Implements hook_menu_link_update().
  */
 function _menu_position_menu_link_update($link) {
-  $rules = db_query('SELECT rid, plid FROM {menu_position_rules} WHERE mlid = :mlid ORDER BY weight, rid', array(':mlid' => $link['mlid']));
-  foreach ($rules as $rule) {
+  $rules = db_query('SELECT rid, plid FROM {menu_position_rules} WHERE mlid = %d ORDER BY weight, rid', $link['mlid']);
+  while ($rule = db_fetch_object($rules)) {
     // Check if the user has altered the parent menu item.
     if ($link['plid'] != $rule->plid) {
       // Update the rule with the new parent.
-      db_update('menu_position_rules')
-        ->fields(array(
-          'menu_name' => $link['menu_name'],
-          'plid' => $link['plid'],
-          ))
-        ->condition('rid', $rule->rid)
-        ->execute();
+      db_query('UPDATE {menu_position_rules} SET menu_name = "%s", plid = %d WHERE rid = %d',
+        array(
+          $link['menu_name'],
+          $link['plid'],
+          $rule->rid,
+        )
+      );
     }
   }
 }
@@ -154,20 +154,18 @@ function menu_position_edit_item_submit($form, &$form_state) {
  * do that in hook_enable() since this module's hook_menu() has yet to be run.
  */
 function menu_position_enable_helper() {
-  $rules = db_query('SELECT rid, plid, admin_title FROM {menu_position_rules} WHERE enabled = :enabled AND mlid = :mlid', array(':enabled' => 1, ':mlid' => 0));
-  if ($rules->rowCount()) {
+  $rules = db_query('SELECT rid, plid, admin_title FROM {menu_position_rules} WHERE enabled = 1 AND mlid = 0');
+  $result = db_affected_rows();
+  if ($result) {
     drupal_set_message(t('Existing menu position rules were discovered and have now been re-configured so they will continue to work.'));
   }
-  foreach ($rules as $rule) {
+  while ($rule = db_fetch_object($rules)) {
     // If we were to attempt menu_position_add_menu_link() here it would fail
     // because the module's router item isn't in the system yet. Instead we flag
     // the rule with a zero-value mlid and fix it in
     // menu_position_rules_form_callback().
     $mlid = menu_position_add_menu_link($rule->rid, $rule->plid, $rule->admin_title);
-    db_update('menu_position_rules')
-      ->fields(array('mlid' => $mlid))
-      ->condition('rid', $rule->rid)
-      ->execute();
+    db_query('UPDATE {menu_position_rules} SET mlid = %d WHERE rid = %d', $mlid, $rule->rid);
   }
 }
 
@@ -191,7 +189,7 @@ function menu_position_rules_form($form_state) {
   $form['#attached']['css'] = array(drupal_get_path('module', 'menu') . '/menu.css');
 
   $rules = db_query('SELECT rid, admin_title, menu_name, enabled, weight FROM {menu_position_rules} ORDER BY weight, rid');
-  $delta = $rules->rowCount();
+  $delta = db_affected_rows();
 
   $menus = menu_get_menus();
 
@@ -206,7 +204,7 @@ function menu_position_rules_form($form_state) {
       '#tree' => TRUE,
       '#theme' => 'menu_position_rules_order',
     );
-    foreach ($rules as $rule) {
+    while ($rule = db_fetch_object($rules)) {
       $form['rules'][$rule->rid] = array(
         'title' => array(
           '#markup' => check_plain($rule->admin_title),
@@ -256,7 +254,7 @@ function menu_position_rules_form_submit($form, &$form_state) {
       'enabled' => $rule['enabled'],
       'weight' => $rule['weight'],
     );
-    $db_rule = db_query('SELECT * FROM {menu_position_rules} WHERE rid = :rid', array(':rid' => $rid))->fetchObject();
+    $db_rule = db_fetch_object(db_query('SELECT * FROM {menu_position_rules} WHERE rid = %d', $rid));
     if (!$rule['enabled']) {
       // If the rule has been disabled, remove the menu link.
       menu_link_delete($db_rule->mlid);
@@ -265,10 +263,9 @@ function menu_position_rules_form_submit($form, &$form_state) {
       // If the rule has been enabled, add a menu link.
       $fields['mlid'] = menu_position_add_menu_link($rid, $db_rule->plid, $db_rule->admin_title);
     }
-    db_update('menu_position_rules')
-      ->fields($fields)
-      ->condition('rid', $rid)
-      ->execute();
+    $sql = 'UPDATE {menu_position_rules} SET ' . implode(' = %d, ', array_keys($fields)) . ' = %d WHERE rid = %d';
+    $fields['rid'] = $rid;
+    db_query($sql, array_values($fields));
   }
   drupal_set_message(t('The new rules ordering has been applied.'));
 }
@@ -345,7 +342,7 @@ function menu_position_edit_rule_form($form, &$form_state, $rid = 0) {
     return;
   }
   // Grab the rule from the database.
-  $form_state['#menu-position-rule'] = db_query('SELECT * FROM {menu_position_rules} WHERE rid = :rid', array(':rid' => $rid))->fetchAssoc();
+  $form_state['#menu-position-rule'] = db_fetch_array(db_query('SELECT * FROM {menu_position_rules} WHERE rid = %d', $rid));
   $form_state['#menu-position-rule']['conditions'] = unserialize($form_state['#menu-position-rule']['conditions']);
   return menu_position_rule_form($form, $form_state);
 }
@@ -498,17 +495,13 @@ function menu_position_add_rule($rule) {
     'menu_name'   => $rule['menu_name'],
     'plid'        => $rule['plid'],
   );
-  $rid = db_insert('menu_position_rules')
-    ->fields($fields)
-    ->execute();
+  db_query('INSERT INTO {menu_position_rules} (' . implode(', ', array_keys($fields)) . ') VALUES ("%s", "%s", "%s", %d)', array_values($fields));
+  $rid = db_last_insert_id('menu_position_rules', 'rid');
 
   $mlid = menu_position_add_menu_link($rid, $rule['plid'], $rule['admin_title']);
 
   // Now add the mlid back to the rule.
-  db_update('menu_position_rules')
-    ->fields(array('mlid' => $mlid))
-    ->condition('rid', $rid)
-    ->execute();
+  db_query('UPDATE {menu_position_rules} SET mlid = %d WHERE rid = %d', $mlid, $rid);
 }
 
 /**
@@ -533,19 +526,10 @@ function menu_position_add_menu_link($rid, $plid, $admin_title) {
  * Edits a menu position rule.
  */
 function menu_position_edit_rule($rule) {
-  $fields = array(
-    'admin_title' => $rule['admin_title'],
-    'conditions'  => $rule['conditions'],
-    'menu_name'   => $rule['menu_name'],
-    'plid'        => $rule['plid'],
-  );
   // Update the rule.
-  db_update('menu_position_rules')
-    ->condition('rid', $rule['rid'])
-    ->fields($fields)
-    ->execute();
+  db_query('UPDATE {menu_position_rules} SET admin_title = "%s", conditions = "%s", menu_name = "%s", plid = %d WHERE rid = %d', $rule['admin_title'], $rule['conditions'], $rule['menu_name'], $rule['plid'], $rule['rid']);
   // Update the link.
-  $mlid = db_query('SELECT mlid FROM {menu_position_rules} WHERE rid = :rid', array(':rid' => $rule['rid']))->fetchField();
+  $mlid = db_result(db_query('SELECT mlid FROM {menu_position_rules} WHERE rid = %d', $rule['rid']));
   menu_position_edit_menu_link($rule['rid'], $mlid, $rule['plid'], $rule['admin_title']);
 }
 
@@ -591,7 +575,7 @@ function menu_position_delete_rule_form($form, &$form_state, $rid = 0) {
   }
   $form['rid'] = array('#type' => 'hidden', '#value' => $rid);
 
-  $title = db_query('SELECT admin_title FROM {menu_position_rules} WHERE rid = :rid', array(':rid' => $rid))->fetchField();
+  $title = db_result(db_query('SELECT admin_title FROM {menu_position_rules} WHERE rid = %d', $rid));
 
   return confirm_form($form, t('Are you sure you want to delete the %title rule?', array('%title' => $title)), 'admin/build/menu-position/edit/' . $rid, NULL, t('Delete'), t('Cancel'));
 }
@@ -600,7 +584,7 @@ function menu_position_delete_rule_form($form, &$form_state, $rid = 0) {
  * Handles form submission for menu_position_delete_rule_form().
  */
 function menu_position_delete_rule_form_submit($form, &$form_state) {
-  $title = db_query('SELECT admin_title FROM {menu_position_rules} WHERE rid = :rid', array(':rid' => $form_state['values']['rid']))->fetchField();
+  $title = db_result(db_query('SELECT admin_title FROM {menu_position_rules} WHERE rid = %d', $form_state['values']['rid']));
 
   menu_position_delete_rule($form_state['values']['rid']);
 
@@ -612,8 +596,6 @@ function menu_position_delete_rule_form_submit($form, &$form_state) {
  * Deletes a menu position rule.
  */
 function menu_position_delete_rule($rid) {
-  db_delete('menu_position_rules')
-    ->condition('rid', $rid)
-    ->execute();
+  db_query('DELETE FROM {menu_position_rules} WHERE rid = %d', $rid);
   menu_link_delete(NULL, 'menu-position/' . $rid);
 }
