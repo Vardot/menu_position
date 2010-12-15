@@ -17,8 +17,13 @@ function _menu_position_menu() {
     'type' => MENU_NORMAL_ITEM,
     'file' => 'menu_position.admin.inc',
   );
+  $items['admin/build/menu-position/rules'] = array(
+    'title' => 'Rules',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => -10,
+  );
   $items['admin/build/menu-position/add'] = array(
-    'title' => 'Add menu position rule',
+    'title' => 'Add rule',
     'description' => 'Add a new menu position rule.',
     'access arguments' => array('administer menu positions'),
     'page callback' => 'drupal_get_form',
