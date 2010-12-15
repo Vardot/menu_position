@@ -89,29 +89,24 @@ function _menu_position_form_menu_overview_form_alter(&$form, &$form_state) {
  */
 function _menu_position_form_menu_edit_item_alter(&$form, &$form_state) {
   // Retrieve all of the rules' mlids.
-  $mlid = db_result(db_query('SELECT mlid FROM {menu_position_rules} WHERE mlid = %d ORDER BY weight, rid', (int) $form['mlid']['#value']));
+  $mlid = db_result(db_query('SELECT mlid FROM {menu_position_rules} WHERE mlid = %d ORDER BY weight, rid', (int) $form['menu']['mlid']['#value']));
   if ($mlid !== FALSE) {
     // If the form hasn't been submitted, display a warning.
-    if (empty($form_state['input'])) {
+    if (empty($form_state['post'])) {
       drupal_set_message(t('This menu item cannot be edited.'), 'warning');
     }
     // Disable all the normal form elements.
     foreach (array('link_title', 'description', 'enabled', 'expanded', 'parent', 'weight') as $key) {
-      $form[$key]['#disabled'] = TRUE;
+      $form['menu'][$key]['#disabled'] = TRUE;
+      unset($form['menu'][$key]['#required']);
     }
     // Remove the validator.
-    $key = array_search('menu_edit_item_validate', $form['#validate']);
-    if ($key !== FALSE) {
-      unset($form['#validate'][$key]);
-    }
+    unset($form['#validate']);
     // Replace the standard submit handler with our own.
-    $key = array_search('menu_edit_item_submit', $form['#submit']);
-    if ($key !== FALSE) {
-      $form['#submit'][$key] = 'menu_position_edit_item_submit';
-    }
+    $form['#submit'] = array('menu_position_edit_item_submit');
     // Replace the Save button with a Cancel button.
-    unset($form['actions']['submit']);
-    $form['actions']['cancel'] = array(
+    unset($form['submit']);
+    $form['cancel'] = array(
       '#type' => 'submit',
       '#value' => t('Cancel'),
     );
@@ -143,8 +138,7 @@ function _menu_position_menu_link_update($link) {
  */
 function menu_position_edit_item_submit($form, &$form_state) {
   // Redirect to the menu edit form and display a message.
-  list($menu_name, ) = explode(':', $form['parent']['#default_value']);
-  $form_state['redirect'] = 'admin/build/menu-customize/' . $menu_name;
+  $form_state['redirect'] = 'admin/build/menu-customize/' . $form['menu']['#item']['menu_name'];
   drupal_set_message(t('Your configuration was not saved.'), 'error');
 }
 
