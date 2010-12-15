@@ -21,13 +21,11 @@ function menu_position_page_delivery_callback_alter() {
 }
 
 /**
- * Implements hook_permission().
+ * Implements hook_perm().
  */
-function menu_position_permission() {
+function menu_position_perm() {
   return array(
-    'administer menu positions' => array(
-      'title' => t('Administer menu position rules'),
-    ),
+    'administer menu positions',
   );
 }
 
