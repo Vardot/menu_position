@@ -269,27 +269,24 @@ function menu_position_rules_form_submit($form, &$form_state) {
 /**
  * Returns HTML for the menu position rules form.
  */
-function theme_menu_position_rules_order($variables) {
-  $element = $variables['element'];
+function theme_menu_position_rules_order($element) {
   drupal_add_tabledrag('menu-position-rules', 'order', 'sibling', 'rule-weight');
 
-  $variables = array(
-    'header' => array(
-      t('Rule'),
-      t('Affected menu'),
-      array(
-        'data' => t('Enabled'),
-        'class' => array('checkbox'),
-      ),
-      t('Weight'),
-      array(
-        'data' => t('Operations'),
-        'colspan' => '2',
-      ),
+  $header = array(
+    t('Rule'),
+    t('Affected menu'),
+    array(
+      'data' => t('Enabled'),
+      'class' => 'checkbox',
     ),
-    'rows' => array(),
-    'attributes' => array('id' => 'menu-position-rules'),
+    t('Weight'),
+    array(
+      'data' => t('Operations'),
+      'colspan' => '2',
+    ),
   );
+  $rows = array();
+  $attributes = array('id' => 'menu-position-rules');
 
   // Generate table of draggable menu names.
   foreach (element_children($element) as $rule) {
@@ -312,13 +309,13 @@ function theme_menu_position_rules_order($variables) {
         'class' => 'menu-operations',
       );
     }
-    $variables['rows'][] = array(
+    $rows[] = array(
       'data' => $data,
       'class' => 'draggable',
     );
   }
 
-  return theme('table', $variables);
+  return theme('table', $header, $rows, $attributes);
 }
 
 /**
