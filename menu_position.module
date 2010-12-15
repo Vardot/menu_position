@@ -131,8 +131,8 @@ function menu_position_evaluate_rules($context = array()) {
   }
 
   // Retrieve the main and secondary menu names.
-  $main_menu      = theme_get_setting('toggle_main_menu')      ? variable_get('menu_main_links_source', 'main-menu') : FALSE;
-  $secondary_menu = theme_get_setting('toggle_secondary_menu') ? variable_get('menu_secondary_links_source', 'user-menu') : FALSE;
+  $main_menu      = theme_get_setting('toggle_primary_links')   ? variable_get('menu_main_links_source', 'primary-links') : FALSE;
+  $secondary_menu = theme_get_setting('toggle_secondary_links') ? variable_get('menu_secondary_links_source', 'secondary-links') : FALSE;
 
   // Retrieve the original router item.
   $original_router_item = menu_get_item();
@@ -196,20 +196,18 @@ function menu_position_evaluate_rules($context = array()) {
 
       // Set the theme's secondary menu links if the rule matches the secondary menu.
       if ($rule->menu_name == $secondary_menu) {
-        $menu_depth = ($secondary_menu == $main_menu) ? 2 : 1;
-        menu_position_precache_tree($router_item, $original_router_item, $menu_item['menu_name'], $menu_depth);
         // Mark that we no longer need to set the secondary menu's tree.
         $secondary_menu = FALSE;
       }
       // Set the theme's main menu links if the rule matches the main menu.
       if ($rule->menu_name == $main_menu) {
-        menu_position_precache_tree($router_item, $original_router_item, $menu_item['menu_name'], 1);
         // Mark that we no longer need to set the main menu's tree.
         $main_menu = FALSE;
       }
       menu_position_precache_tree($router_item, $original_router_item, $menu_item['menu_name']);
 
       if (!$breadcrumb_set) {
+        /*
         // Use our fake router item to influence the active trail.
         $active_trail = menu_set_active_trail();
         // After we reset the original router item, menu_get_active_breadcrumb()
@@ -217,6 +215,7 @@ function menu_position_evaluate_rules($context = array()) {
         // its path won't match the path of the original router item. So we need
         // to force the breadcrumbs now.
         drupal_set_breadcrumb(menu_get_active_breadcrumb());
+        */
         $breadcrumb_set = TRUE;
       }
 
@@ -227,47 +226,30 @@ function menu_position_evaluate_rules($context = array()) {
       $menu_names[] = $rule->menu_name;
     }
   }
-
-  // Clean-up the menu tree cache.
-  $tree = &drupal_static('menu_tree_page_data', array());
-  foreach (array_keys($tree) as $key) {
-    if (strpos($key, ':page:menu-position/')) {
-      // To save memory, clean up the cache since we won't need this data again.
-      unset($tree[$key]);
-    }
-  }
 }
 
 /**
  * Places a menu tree cache in place of the original router item's tree.
  */
-function menu_position_precache_tree($router_item, $original_router_item, $menu_name, $menu_depth = 0) {
-  // Copy the menu tree cache from our faked path to the original router's
-  // path. We iterate through 3 levels of menu_depth: 0 - full tree, 1 -
-  // primary links, 2 - secondary links.
-  $tree = &drupal_static('menu_tree_page_data', array());
-
+function menu_position_precache_tree($router_item, $original_router_item, $menu_name) {
   // Create a menu tree using the menu_position path.
-  menu_tree_page_data($menu_name, $menu_depth ? $menu_depth : NULL);
+  menu_tree_page_data($menu_name);
 
   // Get the cache for the tree we just generated.
-  $router_item_cid = 'links:' . $menu_name . ':page:' . $router_item['href'] . ':' . $GLOBALS['language']->language . ':' . (int) $router_item['access'] . ':' . (int) $menu_depth;
+  $router_item_cid = 'links:' . $menu_name . ':page-cid:' . $router_item['href'] . ':' . (int) $router_item['access'];
   $cache = cache_get($router_item_cid, 'cache_menu');
   $tree_cid = $cache->data;
 
   // Copy the cache to the tree that contains the original router item.
-  $original_router_item_cid = 'links:' . $menu_name . ':page:' . $original_router_item['href'] . ':' . $GLOBALS['language']->language . ':' . (int) $original_router_item['access'] . ':' . $menu_depth;
+  $original_router_item_cid = 'links:' . $menu_name . ':page-cid:' . $original_router_item['href'] . ':' . (int) $original_router_item['access'];
   cache_set($original_router_item_cid, $tree_cid, 'cache_menu');
-
-  // Ensure menu_tree_page_data's static cache is up-to-date as well.
-  $tree[$original_router_item_cid] = $tree[$router_item_cid];
 }
 
 /**
  * Retrieves a list of information about every rule plugin.
  */
 function menu_position_get_plugins() {
-  $plugins = &drupal_static(__FUNCTION__, array());
+  static $plugins = array();
 
   if (empty($plugins)) {
     foreach (module_implements('menu_position_rule_plugins') as $module) {
