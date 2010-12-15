@@ -75,8 +75,9 @@ function _menu_position_form_menu_overview_form_alter(&$form, &$form_state) {
   while ($rule = db_fetch_object($rules)) {
     $mlid = $rule->mlid;
     if (!empty($form['mlid:' . $mlid]['#item']['mlid']) && $mlid == $form['mlid:' . $mlid]['#item']['mlid']) {
-      // Ensure that the menu item cannot be enabled.
+      // Ensure that the menu item cannot be enabled or expanded.
       $form['mlid:' . $mlid]['hidden']['#disabled'] = TRUE;
+      $form['mlid:' . $mlid]['expanded']['#disabled'] = TRUE;
       // Remove the edit link for this menu item.
       unset($form['mlid:' . $mlid]['operations']['edit']);
     }
