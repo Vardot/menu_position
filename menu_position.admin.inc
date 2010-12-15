@@ -186,7 +186,7 @@ function menu_position_rules_form_callback() {
  */
 function menu_position_rules_form($form_state) {
   // We're re-using classes from the menu module.
-  $form['#attached']['css'] = array(drupal_get_path('module', 'menu') . '/menu.css');
+  drupal_add_css(drupal_get_path('module', 'menu') . '/menu.css');
 
   $rules = db_query('SELECT rid, admin_title, menu_name, enabled, weight FROM {menu_position_rules} ORDER BY weight, rid');
   $delta = db_affected_rows();
@@ -196,7 +196,7 @@ function menu_position_rules_form($form_state) {
   // Default message if no rules.
   if ($delta == 0) {
     $form['rules'] = array(
-      '#markup' => '<p>' . t('No rules have been created yet.') . '</p>',
+      '#value' => '<p>' . t('No rules have been created yet.') . '</p>',
     );
   }
   else {
@@ -207,10 +207,10 @@ function menu_position_rules_form($form_state) {
     while ($rule = db_fetch_object($rules)) {
       $form['rules'][$rule->rid] = array(
         'title' => array(
-          '#markup' => check_plain($rule->admin_title),
+          '#value' => check_plain($rule->admin_title),
         ),
         'menu_name' => array(
-          '#markup' => check_plain($menus[$rule->menu_name]),
+          '#value' => check_plain($menus[$rule->menu_name]),
         ),
         'enabled' => array(
           '#type' => 'checkbox',
@@ -224,14 +224,10 @@ function menu_position_rules_form($form_state) {
         ),
         'operations' => array(
           'edit-link' => array(
-            '#type' => 'link',
-            '#title' => t('edit'),
-            '#href' => 'admin/build/menu-position/edit/' . $rule->rid,
+            '#value' => l(t('edit'), 'admin/build/menu-position/edit/' . $rule->rid),
           ),
           'delete-link' => array(
-            '#type' => 'link',
-            '#title' => t('delete'),
-            '#href' => 'admin/build/menu-position/delete/' . $rule->rid,
+            '#value' => l(t('delete'), 'admin/build/menu-position/delete/' . $rule->rid),
           ),
         ),
       );
@@ -298,14 +294,14 @@ function theme_menu_position_rules_order($variables) {
   // Generate table of draggable menu names.
   foreach (element_children($element) as $rule) {
     // Add special classes to be used for tabledrag.js.
-    $element[$rule]['weight']['#attributes']['class'] = array('rule-weight');
+    $element[$rule]['weight']['#attributes']['class'] = 'rule-weight';
     // Render the title, enabled, and weight columns.
     $data = array(
       drupal_render($element[$rule]['title']),
       drupal_render($element[$rule]['menu_name']),
       array(
         'data' => drupal_render($element[$rule]['enabled']),
-        'class' => array('checkbox', 'menu-enabled'),
+        'class' => 'checkbox menu-enabled',
       ),
       drupal_render($element[$rule]['weight']),
     );
@@ -313,12 +309,12 @@ function theme_menu_position_rules_order($variables) {
     foreach (element_children($element[$rule]['operations']) as $op) {
       $data[] = array(
         'data' => drupal_render($element[$rule]['operations'][$op]),
-        'class' => array('menu-operations'),
+        'class' => 'menu-operations',
       );
     }
     $variables['rows'][] = array(
       'data' => $data,
-      'class' => array('draggable'),
+      'class' => 'draggable',
     );
   }
 
@@ -328,14 +324,14 @@ function theme_menu_position_rules_order($variables) {
 /**
  * Menu callback; Adds rules.
  */
-function menu_position_add_rule_form($form, &$form_state) {
-  return menu_position_rule_form($form, $form_state);
+function menu_position_add_rule_form(&$form_state) {
+  return menu_position_rule_form($form_state);
 }
 
 /**
  * Menu callback; Edits rules.
  */
-function menu_position_edit_rule_form($form, &$form_state, $rid = 0) {
+function menu_position_edit_rule_form(&$form_state, $rid = 0) {
   // Make sure rid is set.
   if ($rid == 0) {
     drupal_goto('admin/build/menu-position');
@@ -344,13 +340,13 @@ function menu_position_edit_rule_form($form, &$form_state, $rid = 0) {
   // Grab the rule from the database.
   $form_state['#menu-position-rule'] = db_fetch_array(db_query('SELECT * FROM {menu_position_rules} WHERE rid = %d', $rid));
   $form_state['#menu-position-rule']['conditions'] = unserialize($form_state['#menu-position-rule']['conditions']);
-  return menu_position_rule_form($form, $form_state);
+  return menu_position_rule_form($form_state);
 }
 
 /**
  * Returns form to add or edit a menu position rule.
  */
-function menu_position_rule_form($form, &$form_state) {
+function menu_position_rule_form(&$form_state) {
   // Set the default values.
   $rid           = !empty($form_state['#menu-position-rule']['rid'])         ? $form_state['#menu-position-rule']['rid'] : '';
   $admin_title   = !empty($form_state['#menu-position-rule']['admin_title']) ? $form_state['#menu-position-rule']['admin_title'] : '';
@@ -376,7 +372,6 @@ function menu_position_rule_form($form, &$form_state) {
     '#title' => t('Conditions'),
   );
   $form['conditions'] = array(
-    '#type' => 'vertical_tabs',
   );
 
   // Parent menu item.
@@ -558,7 +553,7 @@ function menu_position_edit_menu_link($rid, $mlid, $plid, $admin_title) {
     'module' => 'menu_position',
     'options' => array(
       'alter' => TRUE,
-      'attributes' => array('class' => array('menu-position-link')),
+      'attributes' => array('class' => 'menu-position-link'),
     ),
   );
   return menu_link_save($item);
@@ -567,7 +562,7 @@ function menu_position_edit_menu_link($rid, $mlid, $plid, $admin_title) {
 /**
  * Menu callback: confirms deletion of rule.
  */
-function menu_position_delete_rule_form($form, &$form_state, $rid = 0) {
+function menu_position_delete_rule_form(&$form_state, $rid = 0) {
   // Make sure rid is set.
   if ($rid == 0) {
     drupal_goto('admin/build/menu-position');
