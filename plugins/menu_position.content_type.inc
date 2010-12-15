@@ -49,7 +49,7 @@ function menu_position_menu_position_rule_content_type_form(&$form, &$form_state
     '#type' => 'checkboxes',
     '#title' => t('Content types'),
     '#default_value' => !empty($variables['content_type']) ? $variables['content_type'] : array(),
-    '#options' => node_type_get_names(),
+    '#options' => node_get_types('names'),
     '#description' => t('Apply this rule only on pages that display content of the given type(s). If you select no types, there will be no type-specific limitation.'),
     '#weight' => -20,
   );
