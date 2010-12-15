@@ -11,7 +11,7 @@
  * hook_page_build (when blocks are added). We're using this hook for its
  * timing, not its data.
  */
-function menu_position_page_delivery_callback_alter() {
+function menu_position_page_preprocess_callback() {
   $context = array();
   $context['path'] = $_GET['q'];
   if (arg(0) == 'node' && is_numeric(arg(1))) {
@@ -47,6 +47,14 @@ function menu_position_theme() {
       'file' => 'menu_position.admin.inc',
     ),
   );
+}
+
+/**
+ * Implements hook_theme_registry_alter().
+ */
+function menu_position_theme_registry_alter(&$theme_registry) {
+  // Allows rules to be run after the page callback, but before the rest of the page is built.
+  array_unshift($theme_registry['page']['preprocess functions'], 'menu_position_page_preprocess_callback');
 }
 
 /**
