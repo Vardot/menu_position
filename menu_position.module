@@ -61,7 +61,7 @@ function menu_position_theme_registry_alter(&$theme_registry) {
  * Implements hook_menu_position_rule_plugins().
  */
 function menu_position_menu_position_rule_plugins() {
-  return array(
+  $plugins = array(
     'content_type' => array(
       'file' => 'plugins/menu_position.content_type.inc',
     ),
@@ -69,6 +69,12 @@ function menu_position_menu_position_rule_plugins() {
       'file' => 'plugins/menu_position.pages.inc',
     ),
   );
+  if (module_exists('taxonomy')) {
+    $plugins['taxonomy'] = array(
+      'file' => 'plugins/menu_position.taxonomy.inc',
+    );
+  }
+  return $plugins;
 }
 
 /**
