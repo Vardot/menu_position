@@ -75,7 +75,11 @@ function _menu_position_form_menu_overview_form_alter(&$form, &$form_state) {
   while ($rule = db_fetch_object($rules)) {
     $mlid = $rule->mlid;
     if (!empty($form['mlid:' . $mlid]['#item']['mlid']) && $mlid == $form['mlid:' . $mlid]['#item']['mlid']) {
+      // Remove link and "disabled" text from the menu item's title.
+      $form['mlid:' . $mlid]['title']['#value'] = strip_tags(str_replace(' (' . t('disabled') . ')', '', $form['mlid:' . $mlid]['title']['#value']));
       // Ensure that the menu item cannot be enabled or expanded.
+      $form['mlid:' . $mlid]['#attributes']['class'] = 'menu-enabled';
+      $form['mlid:' . $mlid]['hidden']['#default_value'] = TRUE;
       $form['mlid:' . $mlid]['hidden']['#disabled'] = TRUE;
       $form['mlid:' . $mlid]['expanded']['#disabled'] = TRUE;
       // Alter the edit link for this menu item.
