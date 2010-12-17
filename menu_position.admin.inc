@@ -551,6 +551,11 @@ function menu_position_edit_menu_link($rid, $mlid, $plid, $admin_title) {
       'attributes' => array('class' => 'menu-position-link'),
     ),
   );
+  // If this is an existing menu link, get the existing weight.
+  if ($item['mlid']) {
+    $existing_weight = db_result(db_query("SELECT weight FROM {menu_links} WHERE mlid = %d", $item['mlid']));
+    $item['weight'] = $existing_weight ? $existing_weight : 0;
+  }
   return menu_link_save($item);
 }
 
