@@ -94,21 +94,13 @@ function menu_position_form_menu_edit_item_alter(&$form, &$form_state) {
 }
 
 /**
- * Implements hook_menu_link_update().
+ * Implements hook_menu_link_alter().
  */
-function menu_position_menu_link_alter(&$item) {
+function menu_position_menu_link_alter(&$item, $menu) {
   if (isset($item['module']) && $item['module'] == 'menu_position') {
-    // Don't allow the link to be "enabled".
-    $item['hidden'] = 1;
+    module_load_include('inc', 'menu_position', 'menu_position.admin');
+    _menu_position_menu_link_alter($item, $menu);
   }
-}
-
-/**
- * Implements hook_menu_link_update().
- */
-function menu_position_menu_link_update($link) {
-  module_load_include('inc', 'menu_position', 'menu_position.admin');
-  _menu_position_menu_link_update($link);
 }
 
 /**

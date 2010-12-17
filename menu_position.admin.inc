@@ -118,9 +118,11 @@ function _menu_position_form_menu_edit_item_alter(&$form, &$form_state) {
 }
 
 /**
- * Implements hook_menu_link_update().
+ * Implements hook_menu_link_alter().
  */
-function _menu_position_menu_link_update($link) {
+function _menu_position_menu_link_alter(&$link, $menu) {
+  // Don't allow the link to be "enabled".
+  $link['hidden'] = 1;
   $rules = db_query('SELECT rid, plid FROM {menu_position_rules} WHERE mlid = %d ORDER BY weight, rid', $link['mlid']);
   while ($rule = db_fetch_object($rules)) {
     // Check if the user has altered the parent menu item.
