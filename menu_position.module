@@ -208,7 +208,7 @@ function menu_position_evaluate_rules($context = array()) {
         array_pop($active_trail);
         $active_trail[] = $original_router_item;
         menu_set_active_trail($active_trail);
-        // menu_breadcrumb module uses drupal_set_breadcrumb(), so override that.
+        // Also override any trail set with drupal_set_breadcrumb().
         $breadcrumbs = menu_get_active_breadcrumb();
         array_pop($breadcrumbs);
         drupal_set_breadcrumb($breadcrumbs);
@@ -227,7 +227,7 @@ function menu_position_evaluate_rules($context = array()) {
 /**
  * Retrieve the active trail for the specified menu.
  *
- * Copy of menu_set_active_trail() without the braindead cache.
+ * Copy of menu_set_active_trail() without the brain-dead static cache.
  */
 function menu_position_get_active_trail($menu_name = NULL) {
   if (!isset($menu_name)) {
