@@ -553,8 +553,8 @@ function menu_position_edit_menu_link($rid, $mlid, $plid, $admin_title) {
   );
   // If this is an existing menu link, get the existing weight.
   if ($item['mlid']) {
-    $existing_weight = db_result(db_query("SELECT weight FROM {menu_links} WHERE mlid = %d", $item['mlid']));
-    $item['weight'] = $existing_weight ? $existing_weight : 0;
+    $existing_item = db_fetch_array(db_query("SELECT plid, weight FROM {menu_links} WHERE mlid = %d", $item['mlid']));
+    $item['weight'] = ($existing_item['plid'] == $plid) ? $existing_item['weight'] : 0;
   }
   return menu_link_save($item);
 }
