@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\menu_position\Form\MenuPositionRuleOrderForm.
- */
-
 namespace Drupal\menu_position\Form;
 
 use Drupal\Core\Config\ConfigFactoryInterface;

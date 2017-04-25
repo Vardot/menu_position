@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\menu_position\Form\MenuPositionRuleDeleteForm.
- */
-
 namespace Drupal\menu_position\Form;
 
 use Drupal\Core\Entity\EntityConfirmFormBase;

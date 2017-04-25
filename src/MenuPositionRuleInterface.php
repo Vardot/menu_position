@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains \Drupal\menu_position\MenuPositionRuleInterface.
- */
 
 namespace Drupal\menu_position;
 

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\menu_position\Form\MenuPositionSettings.
- */
-
 namespace Drupal\menu_position\Form;
 
 use Drupal\Core\Form\ConfigFormBase;

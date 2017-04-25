@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains \Drupal\example\Entity\MenuPositionRule.
- */
 
 namespace Drupal\menu_position\Entity;
 

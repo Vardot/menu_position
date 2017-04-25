@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\menu_position\Controller\MenuPositionRuleListBuilder.
- */
-
 namespace Drupal\menu_position\Controller;
 
 use Drupal\Core\Config\Entity\ConfigEntityListBuilder;
