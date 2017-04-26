@@ -49,7 +49,7 @@ class MenuPositionLink extends MenuLinkBase implements ContainerFactoryPluginInt
   /**
    * {@inheritdoc}
    */
-  protected $overrideAllowed = array();
+  protected $overrideAllowed = [];
 
   /**
    * {@inheritdoc}

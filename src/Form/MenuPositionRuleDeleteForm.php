@@ -35,7 +35,7 @@ class MenuPositionRuleDeleteForm extends EntityConfirmFormBase {
    * {@inheritdoc}
    */
   public function getQuestion() {
-    return $this->t('Are you sure you want to delete the %name rule?', array('%name' => $this->entity->label()));
+    return $this->t('Are you sure you want to delete the %name rule?', ['%name' => $this->entity->label()]);
   }
 
   /**
@@ -58,7 +58,7 @@ class MenuPositionRuleDeleteForm extends EntityConfirmFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $this->menu_link_manager->removeDefinition($this->entity->getMenuLink());
     $this->entity->delete();
-    drupal_set_message($this->t('The %label rule has been deleted.', array('%label' => $this->entity->getLabel())));
+    drupal_set_message($this->t('The %label rule has been deleted.', ['%label' => $this->entity->getLabel()]));
 
     $form_state->setRedirectUrl($this->getCancelUrl());
   }

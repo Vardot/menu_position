@@ -56,25 +56,25 @@ class MenuPositionRuleOrderForm extends FormBase {
 
     // Menu Position rules order (tabledrag).
     $form['#tree'] = TRUE;
-    $form['rules'] = array(
+    $form['rules'] = [
       '#type' => 'table',
       '#empty' => $this->t('No rules have been created yet.'),
       '#title' => $this->t('Rules processing order'),
-      '#header' => array(
+      '#header' => [
         $this->t('Rule'),
         $this->t('Affected Menu'),
         $this->t('Enabled'),
         $this->t('Weight'),
         $this->t('Operations'),
-      ),
-      '#tabledrag' => array(
-        array(
+      ],
+      '#tabledrag' => [
+        [
          'action' => 'order',
          'relationship' => 'sibling',
          'group' => 'rules-weight',
-        ),
-      ),
-    );
+        ],
+      ],
+    ];
 
     // Display table of rules.
     foreach ($rules as $rule) {
@@ -83,48 +83,48 @@ class MenuPositionRuleOrderForm extends FormBase {
       // @todo Because we're in a loop, try to cache this unless the entity
       //   manager handles all that for us. At least only get the storage once?
       $menu = $this->entity_manager->getStorage('menu')->load($menu_link->getMenuName());
-      $form['rules'][$rule->getId()] = array(
-        '#attributes' => array('class' => array('draggable')),
-        'title' => array(
-          '#markup' => '<strong>' . $rule->getLabel() . '</strong> (' . $this->t('Positioned under: %title', array('%title' => $parent->getTitle())) . ')',
-        ),
-        'menu_name' => array(
+      $form['rules'][$rule->getId()] = [
+        '#attributes' => ['class' => ['draggable']],
+        'title' => [
+          '#markup' => '<strong>' . $rule->getLabel() . '</strong> (' . $this->t('Positioned under: %title', ['%title' => $parent->getTitle()]) . ')',
+        ],
+        'menu_name' => [
           '#markup' => $menu->label(),
-        ),
-        'enabled' => array(
+        ],
+        'enabled' => [
           '#type' => 'checkbox',
           '#default_value' => $rule->getEnabled(),
-        ),
-        'weight' => array(
+        ],
+        'weight' => [
           '#type' => 'weight',
-          '#title' => $this->t('Weight for @title', array('@title' => $rule->getLabel())),
+          '#title' => $this->t('Weight for @title', ['@title' => $rule->getLabel()]),
           '#title_display' => 'invisible',
           '#default_value' => $rule->getWeight(),
           '#delta' => max($rule->getWeight(), 5),
-          '#attributes' => array('class' => array('rules-weight')),
-        ),
-        'operations' => array(
+          '#attributes' => ['class' => ['rules-weight']],
+        ],
+        'operations' => [
           '#type' => 'dropbutton',
-          '#links' => array(
-            'edit' => array(
+          '#links' => [
+            'edit' => [
               'title' => $this->t('Edit'),
-              'url' => Url::fromRoute('entity.menu_position_rule.edit_form', array('menu_position_rule' => $rule->getId())),
-            ),
-            'delete' => array(
+              'url' => Url::fromRoute('entity.menu_position_rule.edit_form', ['menu_position_rule' => $rule->getId()]),
+            ],
+            'delete' => [
               'title' => $this->t('Delete'),
-              'url' => Url::fromRoute('entity.menu_position_rule.delete_form', array('menu_position_rule' => $rule->getId())),
-            ),
-          ),
-        ),
-      );
+              'url' => Url::fromRoute('entity.menu_position_rule.delete_form', ['menu_position_rule' => $rule->getId()]),
+            ],
+          ],
+        ],
+      ];
     }
 
     $form['actions']['#type'] = 'actions';
-    $form['actions']['submit'] = array(
+    $form['actions']['submit'] = [
       '#type' => 'submit',
       '#value' => $this->t('Save configuration'),
       '#button_type' => 'primary',
-    );
+    ];
 
     // By default, render the form using theme_system_config_form().
     $form['#theme'] = 'system_config_form';

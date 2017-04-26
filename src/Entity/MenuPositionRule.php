@@ -62,7 +62,7 @@ class MenuPositionRule extends ConfigEntityBase implements MenuPositionRuleInter
    *
    * @var sequence
    */
-  protected $conditions = array();
+  protected $conditions = [];
 
   /**
    * The menu of the menu link for this rule.

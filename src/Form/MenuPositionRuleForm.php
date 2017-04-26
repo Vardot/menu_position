@@ -70,50 +70,50 @@ class MenuPositionRuleForm extends EntityForm {
     $menu_link = $rule->getMenuLinkPlugin();
 
     // Menu position label.
-    $form['label'] = array(
+    $form['label'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Label'),
       '#maxlength' => 255,
       '#default_value' => $rule->getLabel(),
       '#description' => $this->t("Label for the Menu Position rule."),
       '#required' => TRUE,
-    );
+    ];
 
     // Menu position machine name.
-    $form['id'] = array(
+    $form['id'] = [
       '#type' => 'machine_name',
       '#default_value' => $rule->getId(),
-      '#machine_name' => array(
-        'exists' => array($this, 'exist'),
-      ),
+      '#machine_name' => [
+        'exists' => [$this, 'exist'],
+      ],
       '#disabled' => !$rule->isNew(),
-    );
+    ];
 
     // Menu position parent menu tree item.
     $options = $this->menu_parent_form_selector->getParentSelectOptions();
-    $form['parent'] = array(
+    $form['parent'] = [
       '#type' => 'select',
       '#title' => $this->t('Parent menu item'),
       '#required' => TRUE,
       '#default_value' => (!$rule->isNew()) ? $menu_link->getMenuName() . ':' . $menu_link->getParent() : null,
       '#options' => $options,
       '#description' => $this->t('Select the place in the menu where the rule should position its menu links.'),
-      '#attributes' => array(
-        'class' => array('menu-parent-select'),
-      ),
-    );
+      '#attributes' => [
+        'class' => ['menu-parent-select'],
+      ],
+    ];
 
     // Menu position conditions vertical tabs.
-    $form['conditions'] = array(
-      'conditions_tabs' => array(
+    $form['conditions'] = [
+      'conditions_tabs' => [
         '#type' => 'vertical_tabs',
         '#title' => $this->t('Conditions'),
         '#description' => $this->t('All the conditions must be met before a rule is applied.'),
-        '#parents' => array(
+        '#parents' => [
           'conditions_tabs',
-        ),
-      ),
-    );
+        ],
+      ],
+    ];
 
     // Get all available plugins from the plugin manager.
     foreach ($this->condition_plugin_manager->getDefinitions() as $condition_id => $definition) {
@@ -254,15 +254,15 @@ class MenuPositionRuleForm extends EntityForm {
   protected function getPluginDefinition($menu_name, $parent) {
     $rule = $this->entity;
 
-    $definition = array();
+    $definition = [];
     $definition['menu_name'] = $menu_name;
     $definition['parent'] = $parent;
-    $definition['title'] = $this->t('@label  (menu position rule)', array('@label' => $rule->getLabel()));
+    $definition['title'] = $this->t('@label  (menu position rule)', ['@label' => $rule->getLabel()]);
     $definition['url'] = 'base:/menu-position/' . $rule->getId();
     $definition['route_name'] = null;
     $definition['route_parameters'] = [];
     $definition['enabled'] = false;
-    $definition['metadata'] = array('entity_id' => $rule->getId());
+    $definition['metadata'] = ['entity_id' => $rule->getId()];
     $definition['provider'] = 'menu_position';
     $definition['class'] = 'Drupal\menu_position\Plugin\Menu\MenuPositionLink';
 

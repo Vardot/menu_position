@@ -50,17 +50,17 @@ function hook_menu_position_rule_alter(&$rule, array &$context, &$rule_matches, 
  *   An associative array containing the information about each plugin.
  */
 function hook_menu_position_rule_plugins() {
-  return array(
+  return [
     // Register the "foo" plugin.
-    'foo' => array(
+    'foo' => [
       'form_callback' => 'my_module_menu_position_rule_foo_form',
       'condition_callback' => 'my_module_menu_position_condition_foo',
       'file' => 'my_module.foo.inc',
-    ),
+    ],
     // Register the "bar" plugin.
     // Use the defaults for all options.
-    'bar' => array(),
-  );
+    'bar' => [],
+  ];
 }
 
 /**
