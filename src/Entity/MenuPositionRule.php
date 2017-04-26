@@ -4,6 +4,7 @@ namespace Drupal\menu_position\Entity;
 
 use Drupal\Core\Condition\ConditionPluginCollection;
 use Drupal\Core\Config\Entity\ConfigEntityBase;
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityWithPluginCollectionInterface;
 use Drupal\Core\Plugin\ContextAwarePluginInterface;
 use Drupal\menu_position\MenuPositionRuleInterface;
@@ -306,4 +307,19 @@ class MenuPositionRule extends ConfigEntityBase implements MenuPositionRuleInter
     }
     return $this->menuLinkManager;
   }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function preDelete(EntityStorageInterface $storage, array $entities) {
+    // Iterate over entities being deleted and remove associated menu links.
+    foreach ($entities as $entity) {
+      if ($entity->getMenuLink() !== NULL) {
+        $entity->menuLinkManager()->removeDefinition($entity->getMenuLink());
+        $entity->setMenuLink(NULL);
+      }
+    }
+    parent::preDelete($storage, $entities);
+  }
+
 }
