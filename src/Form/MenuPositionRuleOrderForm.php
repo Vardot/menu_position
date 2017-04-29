@@ -3,7 +3,7 @@
 namespace Drupal\menu_position\Form;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Entity\EntityManager;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryFactory;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -18,21 +18,28 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class MenuPositionRuleOrderForm extends FormBase {
 
+  /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
   public function __construct(
     QueryFactory $entity_query,
     MenuLinkManagerInterface $menu_link_manager,
-    EntityManager $entity_manager) {
+    EntityTypeManagerInterface $entity_type_manager) {
 
     $this->entity_query = $entity_query;
     $this->menu_link_manager = $menu_link_manager;
-    $this->entity_manager = $entity_manager;
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('entity.query'),
       $container->get('plugin.manager.menu.link'),
-      $container->get('entity.manager')
+      $container->get('entity_type.manager')
     );
   }
 
@@ -52,7 +59,7 @@ class MenuPositionRuleOrderForm extends FormBase {
     // Get all the rules.
     $query = $this->entity_query->get('menu_position_rule');
     $results = $query->sort('weight')->execute();
-    $rules = $this->entity_manager->getStorage('menu_position_rule')->loadMultiple($results);
+    $rules = $this->entityTypeManager->getStorage('menu_position_rule')->loadMultiple($results);
 
     // Menu Position rules order (tabledrag).
     $form['#tree'] = TRUE;
@@ -82,7 +89,7 @@ class MenuPositionRuleOrderForm extends FormBase {
       $parent = $this->menu_link_manager->createInstance($menu_link->getParent());
       // @todo Because we're in a loop, try to cache this unless the entity
       //   manager handles all that for us. At least only get the storage once?
-      $menu = $this->entity_manager->getStorage('menu')->load($menu_link->getMenuName());
+      $menu = $this->entityTypeManager->getStorage('menu')->load($menu_link->getMenuName());
       $form['rules'][$rule->getId()] = [
         '#attributes' => ['class' => ['draggable']],
         'title' => [
@@ -140,7 +147,7 @@ class MenuPositionRuleOrderForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $storage = $this->entity_manager->getStorage('menu_position_rule');
+    $storage = $this->entityTypeManager->getStorage('menu_position_rule');
     $values = $form_state->getValue('rules');
     $rules = $storage->loadMultiple(array_keys($values));
 

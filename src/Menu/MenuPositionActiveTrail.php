@@ -3,7 +3,7 @@
 namespace Drupal\menu_position\Menu;
 
 use Drupal\Core\Cache\CacheBackendInterface;
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryFactory;
 use Drupal\Core\Entity\Query\QueryFactoryInterface;
 use Drupal\Core\Lock\LockBackendInterface;
@@ -12,6 +12,13 @@ use Drupal\Core\Menu\MenuLinkManagerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 
 class MenuPositionActiveTrail extends MenuActiveTrail  {
+
+  /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
 
   /**
    * Constructs a \Drupal\Core\Menu\MenuActiveTrail object.
@@ -24,6 +31,8 @@ class MenuPositionActiveTrail extends MenuActiveTrail  {
    *   The cache backend.
    * @param \Drupal\Core\Lock\LockBackendInterface $lock
    *   The lock backend.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    */
   public function __construct(
     MenuLinkManagerInterface $menu_link_manager,
@@ -31,11 +40,11 @@ class MenuPositionActiveTrail extends MenuActiveTrail  {
     CacheBackendInterface $cache,
     LockBackendInterface $lock,
     QueryFactory $entity_query,
-    EntityManagerInterface $entity_manager) {
+    EntityTypeManagerInterface $entity_type_manager) {
 
     parent::__construct($menu_link_manager, $route_match, $cache, $lock);
     $this->entity_query = $entity_query;
-    $this->entity_manager = $entity_manager;
+    $this->entityTypeManager = $entity_type_manager;
     $this->settings = \Drupal::config('menu_position.settings');
   }
 
@@ -46,7 +55,7 @@ class MenuPositionActiveTrail extends MenuActiveTrail  {
     // Get all the rules.
     $query = $this->entity_query->get('menu_position_rule');
     $results = $query->sort('weight')->execute();
-    $rules = $this->entity_manager->getStorage('menu_position_rule')->loadMultiple($results);
+    $rules = $this->entityTypeManager->getStorage('menu_position_rule')->loadMultiple($results);
 
     // Iterate over the rules.
     foreach ($rules as $rule) {

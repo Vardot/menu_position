@@ -2,7 +2,7 @@
 
 namespace Drupal\menu_position\Plugin\Menu;
 
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Menu\MenuLinkBase;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -10,11 +10,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class MenuPositionLink extends MenuLinkBase implements ContainerFactoryPluginInterface {
 
   /**
-   * The entity manager.
+   * The entity type manager.
    *
-   * @var \Drupal\Core\Entity\EntityManagerInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityManager;
+  protected $entityTypeManager;
 
   /**
    * Constructs a Drupal\Component\Plugin\PluginBase object.
@@ -25,11 +25,13 @@ class MenuPositionLink extends MenuLinkBase implements ContainerFactoryPluginInt
    *   The plugin_id for the plugin instance.
    * @param mixed $plugin_definition
    *   The plugin implementation definition.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityManagerInterface $entity_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
-    $this->entityManager = $entity_manager;
+    $this->entityTypeManager = $entity_type_manager;
     $this->settings = \Drupal::config('menu_position.settings');
 
   }
@@ -42,7 +44,7 @@ class MenuPositionLink extends MenuLinkBase implements ContainerFactoryPluginInt
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('entity.manager')
+      $container->get('entity_type.manager')
     );
   }
 
@@ -110,10 +112,10 @@ class MenuPositionLink extends MenuLinkBase implements ContainerFactoryPluginInt
    * {@inheritdoc}
    */
   public function getEditRoute() {
-    $storage = $this->entityManager->getStorage('menu_position_rule');
+    $storage = $this->entityTypeManager->getStorage('menu_position_rule');
     $entity_id = $this->pluginDefinition['metadata']['entity_id'];
     $entity = $storage->load($entity_id);
-    return $entity->urlInfo();
+    return $entity->toUrl();
   }
 }
 
