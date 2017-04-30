@@ -4,7 +4,7 @@ namespace Drupal\menu_position\Form;
 
 use Drupal\Core\Condition\ConditionManager;
 use Drupal\Core\Entity\EntityForm;
-use Drupal\Core\Entity\EntityTypeManager;
+use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\Entity\Query\QueryFactory;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Form\FormStateInterface;
@@ -24,7 +24,7 @@ class MenuPositionRuleForm extends EntityForm {
    */
   public function __construct(
     QueryFactory $entity_query,
-    EntityTypeManager $entity_type_manager,
+    EntityManager $entity_type_manager,
     MenuParentFormSelector $menu_parent_form_selector,
     MenuLinkManagerInterface $menu_link_manager,
     ConditionManager $condition_plugin_manager,
