@@ -259,7 +259,7 @@ class MenuPositionRuleForm extends EntityForm {
     $definition['parent'] = $parent;
     $definition['title'] = $this->t('@label  (menu position rule)', ['@label' => $rule->getLabel()]);
     $definition['url'] = 'base:/menu-position/' . $rule->getId();
-    $definition['route_name'] = null;
+    $definition['route_name'] = '<none>';
     $definition['route_parameters'] = [];
     $definition['enabled'] = false;
     $definition['metadata'] = ['entity_id' => $rule->getId()];

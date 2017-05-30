@@ -51,7 +51,10 @@ class MenuPositionLink extends MenuLinkBase implements ContainerFactoryPluginInt
   /**
    * {@inheritdoc}
    */
-  protected $overrideAllowed = [];
+  protected $overrideAllowed = [
+    'parent' => 1,
+    'weight' => 1,
+  ];
 
   /**
    * {@inheritdoc}
@@ -87,7 +90,12 @@ class MenuPositionLink extends MenuLinkBase implements ContainerFactoryPluginInt
    * {@inheritdoc}
    */
   public function updateLink(array $new_definition_values, $persist) {
-    return $new_definition_values;
+    // Filter the list of updates to only those that are allowed.
+    $overrides = array_intersect_key($new_definition_values, $this->overrideAllowed);
+    // Update the definition.
+    $this->pluginDefinition = $overrides + $this->getPluginDefinition();
+
+    return $this->pluginDefinition;
   }
 
   /**
