@@ -24,7 +24,7 @@ class MenuPositionRuleForm extends EntityForm {
    */
   public function __construct(
     QueryFactory $entity_query,
-    EntityManager $entity_type_manager,
+    EntityManager $entity_manager,
     MenuParentFormSelector $menu_parent_form_selector,
     MenuLinkManagerInterface $menu_link_manager,
     ConditionManager $condition_plugin_manager,
