@@ -7,6 +7,11 @@ use Drupal\Core\Menu\MenuLinkBase;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Defines menu links provided by menu position rules.
+ *
+ * @see \Drupal\menu_position\Plugin\Derivative\MenuPositionLink
+ */
 class MenuPositionLink extends MenuLinkBase implements ContainerFactoryPluginInterface {
 
   /**
@@ -125,5 +130,6 @@ class MenuPositionLink extends MenuLinkBase implements ContainerFactoryPluginInt
     $entity = $storage->load($entity_id);
     return $entity->toUrl();
   }
+
 }
 

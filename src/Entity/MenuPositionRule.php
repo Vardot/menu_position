@@ -6,6 +6,7 @@ use Drupal\Core\Condition\ConditionPluginCollection;
 use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityWithPluginCollectionInterface;
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Plugin\ContextAwarePluginInterface;
 use Drupal\menu_position\MenuPositionRuleInterface;
 
@@ -30,7 +31,7 @@ use Drupal\menu_position\MenuPositionRuleInterface;
  *   links = {
  *     "add-form" = "/admin/structure/menu-position/add",
  *     "edit-form" = "/admin/structure/menu-position/{menu_position_rule}/edit",
- *     "delete-form" = "/admin/strcuture/menu-position/{menu_position_rule}/delete",
+ *     "delete-form" = "/admin/structure/menu-position/{menu_position_rule}/delete",
  *     "collection" = "/admin/structure/menu-position"
  *   }
  * )
@@ -75,7 +76,7 @@ class MenuPositionRule extends ConfigEntityBase implements MenuPositionRuleInter
   /**
    * The parent menu link id for this rule.
    *
-   * @var integer
+   * @var string
    */
   protected $parent;
 
@@ -218,10 +219,11 @@ class MenuPositionRule extends ConfigEntityBase implements MenuPositionRuleInter
   }
 
   public function getMenuLinkPlugin() {
-    if ($this->getMenuLink() === null) {
+    $menu_link = $this->getMenuLink();
+    if (!$menu_link || !$this->menuLinkManager()->hasDefinition($menu_link)) {
       return null;
     }
-    return $this->menuLinkManager()->createInstance($this->getMenuLink());
+    return $this->menuLinkManager()->createInstance($menu_link);
   }
 
   /**
@@ -320,6 +322,18 @@ class MenuPositionRule extends ConfigEntityBase implements MenuPositionRuleInter
       }
     }
     parent::preDelete($storage, $entities);
+
+  /**
+   *
+   * Rebuild routes to create menu links.
+   */
+  public function postSave(EntityStorageInterface $storage, $update = TRUE) {
+    parent::postSave($storage, $update);
+
+    if ($this->isSyncing()) {
+      // Rebuild menu position links when new rule is created.
+      \Drupal::service('router.builder')->setRebuildNeeded();
+    }
   }
 
 }

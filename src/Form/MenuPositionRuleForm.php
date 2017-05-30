@@ -185,29 +185,38 @@ class MenuPositionRuleForm extends EntityForm {
   /**
    * {@inheritdoc}
    */
-  public function save(array $form, FormStateInterface $form_state) {
-    // Get menu position rule.
-    $rule = $this->entity;
-    $is_new = $rule->isNew();
-
+  public function submitForm(array &$form, FormStateInterface $form_state) {
     // Break apart parent selector for menu link creation.
     $link_parts = explode(':', $form_state->getValue('parent'));
     $menu_name = array_shift($link_parts);
     $parent= implode(':', $link_parts);
 
-    // This is a new menu position rule.
-    if ($is_new) {
-      // Set to enabled by default.
-      $rule->setEnabled(TRUE);
+    // @todo Add storage and get/set methods for these attributes.
+    $form_state->setValue('menu_name', $menu_name);
+    $form_state->setValue('parent', $parent);
 
-      // Add new menu link plugin definition for this menu position rule.
-      $menu_link = $this->menu_link_manager->addDefinition('menu_position_link:' . $rule->getId(), $this->getPluginDefinition($menu_name, $parent));
-      $rule->setMenuLink($menu_link->getPluginId());
-    } else {
+    parent::submitForm($form, $form_state);
+  }
 
-      // Update existing menu link definition.
-      $menu_link = $this->menu_link_manager->updateDefinition('menu_position_link:' . $rule->getId(), $this->getPluginDefinition($menu_name, $parent));
+  /**
+   * {@inheritdoc}
+   */
+  public function save(array $form, FormStateInterface $form_state) {
+    // Get menu position rule.
+    $rule = $this->entity;
+    $is_new = $rule->isNew();
+
+    $menu_link_id = 'menu_position_link:' . $rule->id();
+    if (!$this->menu_link_manager->hasDefinition($menu_link_id)) {
+      // Let the deriver generate the menu link.
+      $this->menu_link_manager->rebuild();
+      $this->setMenuLink($menu_link_id);
     }
+    $definition = $this->menu_link_manager->getDefinition($menu_link_id);
+    $menu_link = $this->menu_link_manager->updateDefinition($menu_link_id, [
+      'menu_name' => $form_state->getValue('menu_name'),
+      'parent' => $form_state->getValue('parent'),
+    ] + $definition);
 
     // Submit visibility condition settings.
     foreach ($form_state->getValue('conditions') as $condition_id => $values) {
@@ -243,30 +252,6 @@ class MenuPositionRuleForm extends EntityForm {
 
     // Redirect back to the menu position rule order form.
     $form_state->setRedirect('entity.menu_position_rule.order_form');
-  }
-
-  /**
-   * Helper function that returns a plugin definition array for a menu position
-   * link.
-   *
-   * @return array MenuPositionLink plugin definition array.
-   */
-  protected function getPluginDefinition($menu_name, $parent) {
-    $rule = $this->entity;
-
-    $definition = [];
-    $definition['menu_name'] = $menu_name;
-    $definition['parent'] = $parent;
-    $definition['title'] = $this->t('@label  (menu position rule)', ['@label' => $rule->getLabel()]);
-    $definition['url'] = 'base:/menu-position/' . $rule->getId();
-    $definition['route_name'] = '<none>';
-    $definition['route_parameters'] = [];
-    $definition['enabled'] = false;
-    $definition['metadata'] = ['entity_id' => $rule->getId()];
-    $definition['provider'] = 'menu_position';
-    $definition['class'] = 'Drupal\menu_position\Plugin\Menu\MenuPositionLink';
-
-    return $definition;
   }
 
   /**
