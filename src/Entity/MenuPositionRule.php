@@ -6,7 +6,6 @@ use Drupal\Core\Condition\ConditionPluginCollection;
 use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityWithPluginCollectionInterface;
-use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Plugin\ContextAwarePluginInterface;
 use Drupal\menu_position\MenuPositionRuleInterface;
 
@@ -322,6 +321,7 @@ class MenuPositionRule extends ConfigEntityBase implements MenuPositionRuleInter
       }
     }
     parent::preDelete($storage, $entities);
+  }
 
   /**
    *

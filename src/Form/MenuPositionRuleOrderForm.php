@@ -7,6 +7,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryFactory;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\ProxyClass\Routing\RouteBuilder;
 use Drupal\Core\Url;
 use Drupal\Core\Menu\MenuLinkManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -28,18 +29,21 @@ class MenuPositionRuleOrderForm extends FormBase {
   public function __construct(
     QueryFactory $entity_query,
     MenuLinkManagerInterface $menu_link_manager,
-    EntityTypeManagerInterface $entity_type_manager) {
+    EntityTypeManagerInterface $entity_type_manager,
+    RouteBuilder $route_builder) {
 
     $this->entity_query = $entity_query;
     $this->menu_link_manager = $menu_link_manager;
     $this->entityTypeManager = $entity_type_manager;
+    $this->route_builder = $route_builder;
   }
 
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('entity.query'),
       $container->get('plugin.manager.menu.link'),
-      $container->get('entity_type.manager')
+      $container->get('entity_type.manager'),
+      $container->get('router.builder')
     );
   }
 
@@ -157,6 +161,9 @@ class MenuPositionRuleOrderForm extends FormBase {
       $rule->setWeight((float) $value['weight']);
       $storage->save($rule);
     }
+
+    // Flush appropriate menu cache.
+    $this->route_builder->rebuild();
 
     drupal_set_message($this->t('The new rules ordering has been applied.'));
   }
