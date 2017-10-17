@@ -169,6 +169,19 @@ class MenuPositionRule extends ConfigEntityBase implements MenuPositionRuleInter
   /**
    * {@inheritdoc}
    */
+  public function getMenuName() {
+    return $this->menu_name;
+  }
+  /**
+   * {@inheritdoc}
+   */
+  public function getParent() {
+    return $this->parent;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getWeight() {
     return $this->weight;
   }
@@ -199,6 +212,20 @@ class MenuPositionRule extends ConfigEntityBase implements MenuPositionRuleInter
    */
   public function setMenuLink($menu_link) {
     $this->menu_link = $menu_link;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setMenuName($menu_name) {
+    $this->menu_name = $menu_name;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setParent($parent) {
+    $this->parent = $parent;
   }
 
   /**

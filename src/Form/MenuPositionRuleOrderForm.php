@@ -26,6 +26,13 @@ class MenuPositionRuleOrderForm extends FormBase {
    */
   protected $entityTypeManager;
 
+  /**
+   * The menu link manager.
+   *
+   * @var \Drupal\Core\Menu\MenuLinkManagerInterface.
+   */
+  protected $menu_link_manager;
+
   public function __construct(
     QueryFactory $entity_query,
     MenuLinkManagerInterface $menu_link_manager,
@@ -89,6 +96,8 @@ class MenuPositionRuleOrderForm extends FormBase {
 
     // Display table of rules.
     foreach ($rules as $rule) {
+      /* @var \Drupal\menu_position\Entity\MenuPositionRule $rule */
+      /* @var \Drupal\menu_position\Plugin\Menu\MenuPositionLink $menu_link */
       $menu_link = $rule->getMenuLinkPlugin();
       $parent = $this->menu_link_manager->createInstance($menu_link->getParent());
       // @todo Because we're in a loop, try to cache this unless the entity

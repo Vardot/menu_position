@@ -47,6 +47,8 @@ class MenuPositionLink extends DeriverBase implements ContainerDeriverInterface 
     // Reset the discovered definitions.
     $this->derivatives = [];
     foreach ($this->storage->loadMultiple() as $menu_position_rule) {
+      /* @var \Drupal\menu_position\Entity\MenuPositionRule $menu_position_rule */
+      /* @var \Drupal\menu_position\Plugin\Menu\MenuPositionLink $menu_link */
       if ($menu_link = $menu_position_rule->getMenuLinkPlugin()) {
         // Link already exists, use that.
         $definition = $menu_link->getPluginDefinition();
@@ -58,8 +60,8 @@ class MenuPositionLink extends DeriverBase implements ContainerDeriverInterface 
           'title' => t('@label (menu position rule)', [
             '@label' => $menu_position_rule->getLabel(),
           ]),
-          'menu_name' => 'main',
-          'parent' => '',
+          'menu_name' => $menu_position_rule->getMenuName(),
+          'parent' => $menu_position_rule->getParent(),
           'weight' => 0,
           'metadata' => [
             'entity_id' => $menu_position_rule->id(),

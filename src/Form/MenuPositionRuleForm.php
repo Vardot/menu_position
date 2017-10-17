@@ -20,6 +20,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class MenuPositionRuleForm extends EntityForm {
 
   /**
+   * The menu link manager.
+   *
+   * @var \Drupal\Core\Menu\MenuLinkManagerInterface.
+   */
+  protected $menu_link_manager;
+
+  /**
    * @param \Drupal\Core\Entity\Query\QueryFactory $entity_query
    *   The entity query.
    */
@@ -207,14 +214,16 @@ class MenuPositionRuleForm extends EntityForm {
    */
   public function save(array $form, FormStateInterface $form_state) {
     // Get menu position rule.
+    /* @var \Drupal\menu_position\Entity\MenuPositionRule $rule */
     $rule = $this->entity;
     $is_new = $rule->isNew();
 
     $menu_link_id = 'menu_position_link:' . $rule->id();
     if (!$this->menu_link_manager->hasDefinition($menu_link_id)) {
+      $rule->setMenuLink($menu_link_id);
+      $rule->save();
       // Let the deriver generate the menu link.
       $this->menu_link_manager->rebuild();
-      $this->setMenuLink($menu_link_id);
     }
     $definition = $this->menu_link_manager->getDefinition($menu_link_id);
     $menu_link = $this->menu_link_manager->updateDefinition($menu_link_id, [
