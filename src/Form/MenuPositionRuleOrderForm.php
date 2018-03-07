@@ -120,7 +120,7 @@ class MenuPositionRuleOrderForm extends FormBase {
           '#title' => $this->t('Weight for @title', ['@title' => $rule->getLabel()]),
           '#title_display' => 'invisible',
           '#default_value' => $rule->getWeight(),
-          '#delta' => max($rule->getWeight(), 5),
+          '#delta' => ceil(count($rules)/2),
           '#attributes' => ['class' => ['rules-weight']],
         ],
         'operations' => [
