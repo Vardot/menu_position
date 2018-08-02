@@ -288,7 +288,7 @@ class MenuPositionRule extends ConfigEntityBase implements MenuPositionRuleInter
       }
 
       // If this condition evaluates to false, rule is inactive.
-      if (!$condition->evaluate()) {
+      if (!$condition->execute()) {
         return false;
       }
     }
