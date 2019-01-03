@@ -1,4 +1,4 @@
-name: 'Menu position'
+name: 'Menu Position'
 type: module
 description: 'Customize menu position of nodes depending on their content type, associated terms and others conditions.'
 core: '8.x'
