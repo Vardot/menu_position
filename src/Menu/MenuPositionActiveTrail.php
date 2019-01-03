@@ -54,6 +54,12 @@ class MenuPositionActiveTrail extends MenuActiveTrail  {
   public function getActiveLink($menu_name = NULL) {
     // Get all the rules.
     $query = $this->entity_query->get('menu_position_rule');
+
+    // Filter on the menu name if there is one.
+    if (!is_null($menu_name)) {
+      $query->condition('menu_name', $menu_name);
+    }
+
     $results = $query->sort('weight')->execute();
     $rules = $this->entityTypeManager->getStorage('menu_position_rule')->loadMultiple($results);
 
