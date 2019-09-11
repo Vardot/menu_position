@@ -8,6 +8,7 @@ use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\Entity\Query\QueryFactory;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Form\SubformState;
 use Drupal\Core\Menu\MenuLinkManagerInterface;
 use Drupal\Core\Menu\MenuParentFormSelector;
 use Drupal\Core\Plugin\ContextAwarePluginInterface;
@@ -191,6 +192,20 @@ class MenuPositionRuleForm extends EntityForm {
     if (empty($parent)) {
       $form_state->setErrorByName('parent', $this->t('Please select a menu item. You have selected the name of a menu.'));
     }
+
+    // Validate visibility condition settings.
+    foreach ($form_state->getValue('conditions') as $condition_id => $values) {
+      // All condition plugins use 'negate' as a Boolean in their schema.
+      // However, certain form elements may return it as 0/1. Cast here to
+      // ensure the data is in the expected type.
+      if (array_key_exists('negate', $values)) {
+        $form_state->setValue(['conditions', $condition_id, 'negate'], (bool) $values['negate']);
+      }
+
+      // Allow the condition to validate the form.
+      $condition = $form_state->get(['conditions', $condition_id]);
+      $condition->validateConfigurationForm($form['conditions'][$condition_id], SubformState::createForSubform($form['conditions'][$condition_id], $form, $form_state));
+    }
   }
 
   /**
@@ -235,9 +250,8 @@ class MenuPositionRuleForm extends EntityForm {
     foreach ($form_state->getValue('conditions') as $condition_id => $values) {
       // Allow the condition to submit the form.
       $condition = $form_state->get(['conditions', $condition_id]);
-      $condition_values = (new FormState())
-        ->setValues($values);
-      $condition->submitConfigurationForm($form, $condition_values);
+      $condition_values = SubformState::createForSubform($form['conditions'][$condition_id], $form, $form_state);
+      $condition->submitConfigurationForm($form['conditions'][$condition_id], $condition_values);
 
       // Set context mapping values.
       if ($condition instanceof ContextAwarePluginInterface) {
@@ -247,7 +261,6 @@ class MenuPositionRuleForm extends EntityForm {
 
       // Update the original form values.
       $condition_configuration = $condition->getConfiguration();
-      $form_state->setValue(['conditions', $condition_id], $condition_configuration);
 
       // Update the conditions on the menu position rule.
       $rule->getConditions()->addInstanceId($condition_id, $condition_configuration);
