@@ -21,6 +21,20 @@ class MenuPositionActiveTrail extends MenuActiveTrail  {
   protected $entityTypeManager;
 
   /**
+   * The entity query factory service.
+   *
+   * @var \Drupal\Core\Entity\Query\QueryFactory
+   */
+  protected $entity_query;
+
+  /**
+   * Menu position settings.
+   *
+   * @var \Drupal\Core\Config\ImmutableConfig
+   */
+  protected $settings;
+
+  /**
    * Constructs a \Drupal\Core\Menu\MenuActiveTrail object.
    *
    * @param \Drupal\Core\Menu\MenuLinkManagerInterface $menu_link_manager

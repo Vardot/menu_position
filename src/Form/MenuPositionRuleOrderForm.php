@@ -33,6 +33,20 @@ class MenuPositionRuleOrderForm extends FormBase {
    */
   protected $menu_link_manager;
 
+  /**
+   * The entity query factory service.
+   *
+   * @var \Drupal\Core\Entity\Query\QueryFactory
+   */
+  protected $entity_query;
+
+  /**
+   * The Route Builder.
+   *
+   * @var \Drupal\Core\ProxyClass\Routing\RouteBuilder
+   */
+  protected $route_builder;
+
   public function __construct(
     QueryFactory $entity_query,
     MenuLinkManagerInterface $menu_link_manager,

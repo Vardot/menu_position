@@ -22,6 +22,13 @@ class MenuPositionLink extends MenuLinkBase implements ContainerFactoryPluginInt
   protected $entityTypeManager;
 
   /**
+   * Menu position settings.
+   *
+   * @var \Drupal\Core\Config\ImmutableConfig
+   */
+  protected $settings;
+
+  /**
    * Constructs a Drupal\Component\Plugin\PluginBase object.
    *
    * @param array $configuration

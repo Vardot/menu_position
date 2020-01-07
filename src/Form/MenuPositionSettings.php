@@ -16,6 +16,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class MenuPositionSettings extends ConfigFormBase {
 
   /**
+   * The Route Builder.
+   *
+   * @var \Drupal\Core\ProxyClass\Routing\RouteBuilder
+   */
+  protected $route_builder;
+
+  /**
    * {@inheritdoc}
    */
   public function __construct(

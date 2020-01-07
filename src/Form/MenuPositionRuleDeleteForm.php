@@ -16,8 +16,26 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class MenuPositionRuleDeleteForm extends EntityConfirmFormBase {
 
   /**
-   * @param \Drupal\Core\Entity\Query\QueryFactory $entity_query
-   *   The entity query.
+   * The Menu Parent Form Selector.
+   *
+   * @var \Drupal\Core\Menu\MenuLinkManagerInterface
+   */
+  protected $menu_link_manager;
+
+  /**
+   * The Route Builder.
+   *
+   * @var \Drupal\Core\ProxyClass\Routing\RouteBuilder
+   */
+  protected $route_builder;
+
+  /**
+   * The menu position rule delete form constructor.
+   *
+   * @param \Drupal\Core\Menu\MenuLinkManagerInterface $menu_link_manager
+   *   The menu link manager.
+   * @param \Drupal\Core\ProxyClass\Routing\RouteBuilder $route_builder
+   *   The route builder.
    */
   public function __construct(
     MenuLinkManagerInterface $menu_link_manager,
