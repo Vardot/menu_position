@@ -157,6 +157,13 @@ class MenuPositionRuleForm extends EntityForm {
       '#disabled' => !$rule->isNew(),
     ];
 
+    $form['enabled'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Enabled'),
+      '#description' => $this->t('A flag for whether the menu position rule should be evaluated or is ignored.'),
+      '#default_value' => $rule->isNew() ? TRUE : $rule->getEnabled(),
+    ];
+
     // Menu position parent menu tree item.
     $options = $this->menu_parent_form_selector->getParentSelectOptions();
     $form['parent'] = [
