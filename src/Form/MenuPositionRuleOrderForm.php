@@ -2,12 +2,12 @@
 
 namespace Drupal\menu_position\Form;
 
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryFactory;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\ProxyClass\Routing\RouteBuilder;
+use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\Core\Routing\RouteBuilderInterface;
 use Drupal\Core\Url;
 use Drupal\Core\Menu\MenuLinkManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -43,7 +43,7 @@ class MenuPositionRuleOrderForm extends FormBase {
   /**
    * The Route Builder.
    *
-   * @var \Drupal\Core\ProxyClass\Routing\RouteBuilder
+   * @var \Drupal\Core\Routing\RouteBuilderInterface
    */
   protected $route_builder;
 
@@ -51,12 +51,14 @@ class MenuPositionRuleOrderForm extends FormBase {
     QueryFactory $entity_query,
     MenuLinkManagerInterface $menu_link_manager,
     EntityTypeManagerInterface $entity_type_manager,
-    RouteBuilder $route_builder) {
+    RouteBuilderInterface $route_builder,
+    MessengerInterface $messenger) {
 
+    $this->entityTypeManager = $entity_type_manager;
     $this->entity_query = $entity_query;
     $this->menu_link_manager = $menu_link_manager;
-    $this->entityTypeManager = $entity_type_manager;
     $this->route_builder = $route_builder;
+    $this->messenger = $messenger;
   }
 
   public static function create(ContainerInterface $container) {
@@ -64,7 +66,8 @@ class MenuPositionRuleOrderForm extends FormBase {
       $container->get('entity.query'),
       $container->get('plugin.manager.menu.link'),
       $container->get('entity_type.manager'),
-      $container->get('router.builder')
+      $container->get('router.builder'),
+      $container->get('messenger')
     );
   }
 
@@ -188,6 +191,6 @@ class MenuPositionRuleOrderForm extends FormBase {
     // Flush appropriate menu cache.
     $this->route_builder->rebuild();
 
-    drupal_set_message($this->t('The new rules ordering has been applied.'));
+    $this->messenger->addMessage($this->t('The new rules ordering has been applied.'));
   }
 }
