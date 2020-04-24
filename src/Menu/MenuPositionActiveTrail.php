@@ -5,7 +5,6 @@ namespace Drupal\menu_position\Menu;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Entity\Query\QueryFactory;
 use Drupal\Core\Entity\Query\QueryFactoryInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Menu\MenuActiveTrail;
@@ -24,7 +23,7 @@ class MenuPositionActiveTrail extends MenuActiveTrail  {
   /**
    * The entity query factory service.
    *
-   * @var \Drupal\Core\Entity\Query\QueryFactory
+   * @var \Drupal\Core\Entity\Query\QueryFactoryInterface
    */
   protected $entity_query;
 
@@ -43,10 +42,11 @@ class MenuPositionActiveTrail extends MenuActiveTrail  {
    * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
    *   A route match object for finding the active link.
    * @param \Drupal\Core\Cache\CacheBackendInterface $cache
-   *   The cache backend.
+   *   The cache backend service.
    * @param \Drupal\Core\Lock\LockBackendInterface $lock
-   *   The lock backend.
-   * @param \Drupal\Core\Entity\Query\QueryFactory $entity_query
+   *   The lock backend service.
+   * @param \Drupal\Core\Entity\Query\QueryFactoryInterface $entity_query
+   *   The query factory service.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
@@ -57,7 +57,7 @@ class MenuPositionActiveTrail extends MenuActiveTrail  {
     RouteMatchInterface $route_match,
     CacheBackendInterface $cache,
     LockBackendInterface $lock,
-    QueryFactory $entity_query,
+    QueryFactoryInterface $entity_query,
     EntityTypeManagerInterface $entity_type_manager,
     ConfigFactoryInterface $config_factory) {
 
