@@ -4,16 +4,18 @@ namespace Drupal\menu_position\Form;
 
 use Drupal\Core\Condition\ConditionManager;
 use Drupal\Core\Entity\EntityForm;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\EntityManager;
 use Drupal\Core\Entity\Query\QueryFactory;
+use Drupal\Core\Form\FormState;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\SubformState;
 use Drupal\Core\Menu\MenuLinkManagerInterface;
 use Drupal\Core\Menu\MenuParentFormSelector;
-use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Plugin\ContextAwarePluginInterface;
 use Drupal\Core\Plugin\Context\ContextRepositoryInterface;
-use Drupal\Core\Routing\RouteBuilderInterface;
+use Drupal\Core\ProxyClass\Routing\RouteBuilder;
+use Drupal\menu_link_content\Entity\MenuLinkContent;
+use Drupal\menu_position\Entity\MenuPositionRule;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class MenuPositionRuleForm extends EntityForm {
@@ -26,11 +28,11 @@ class MenuPositionRuleForm extends EntityForm {
   protected $entity_query;
 
   /**
-   * The entity type manager service.
+   * The entity manager.
    *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   * @var \Drupal\Core\Entity\EntityManager
    */
-  protected $entity_type_manager;
+  protected $entity_manager;
 
   /**
    * The Menu parent form selector.
@@ -63,7 +65,7 @@ class MenuPositionRuleForm extends EntityForm {
   /**
    * The Route Builder.
    *
-   * @var \Drupal\Core\Routing\RouteBuilderInterface
+   * @var \Drupal\Core\ProxyClass\Routing\RouteBuilder
    */
   protected $route_builder;
 
@@ -72,8 +74,8 @@ class MenuPositionRuleForm extends EntityForm {
    *
    * @param \Drupal\Core\Entity\Query\QueryFactory $entity_query
    *   The entity query factory service.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The entity type manager service.
+   * @param \Drupal\Core\Entity\EntityManager $entity_manager
+   *   The entity manager.
    * @param \Drupal\Core\Menu\MenuParentFormSelector $menu_parent_form_selector
    *   The menu parent form selector.
    * @param \Drupal\Core\Menu\MenuLinkManagerInterface $menu_link_manager
@@ -82,29 +84,25 @@ class MenuPositionRuleForm extends EntityForm {
    *   The condition plugin manager.
    * @param \Drupal\Core\Plugin\Context\ContextRepositoryInterface $context_repository
    *   The context repository.
-   * @param \Drupal\Core\Routing\RouteBuilderInterface $route_builder
-   *   The route building service.
-   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
-   *   The messenger.
+   * @param \Drupal\Core\ProxyClass\Routing\RouteBuilder $route_builder
+   *   The route builder.
    */
   public function __construct(
     QueryFactory $entity_query,
-    EntityTypeManagerInterface $entity_type_manager,
+    EntityManager $entity_manager,
     MenuParentFormSelector $menu_parent_form_selector,
     MenuLinkManagerInterface $menu_link_manager,
     ConditionManager $condition_plugin_manager,
     ContextRepositoryInterface $context_repository,
-    RouteBuilderInterface $route_builder,
-    MessengerInterface $messenger) {
+    RouteBuilder $route_builder) {
 
     $this->entity_query = $entity_query;
-    $this->entity_type_manager = $entity_type_manager;
+    $this->entity_manager = $entity_manager;
     $this->menu_parent_form_selector = $menu_parent_form_selector;
     $this->menu_link_manager = $menu_link_manager;
     $this->condition_plugin_manager = $condition_plugin_manager;
     $this->context_repository = $context_repository;
     $this->route_builder = $route_builder;
-    $this->messenger = $messenger;
   }
 
   /**
@@ -113,13 +111,12 @@ class MenuPositionRuleForm extends EntityForm {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('entity.query'),
-      $container->get('entity_type.manager'),
+      $container->get('entity.manager'),
       $container->get('menu.parent_form_selector'),
       $container->get('plugin.manager.menu.link'),
       $container->get('plugin.manager.condition'),
       $container->get('context.repository'),
-      $container->get('router.builder'),
-      $container->get('messenger')
+      $container->get('router.builder')
     );
   }
 
@@ -135,7 +132,6 @@ class MenuPositionRuleForm extends EntityForm {
     $form_state->setTemporaryValue('gathered_contexts', $this->context_repository->getAvailableContexts());
 
     // Get the menu position rule entity.
-    /** @var \Drupal\menu_position\Entity\MenuPositionRule $rule */
     $rule = $this->entity;
 
     // Get the menu link for this rule.
@@ -336,13 +332,13 @@ class MenuPositionRuleForm extends EntityForm {
     // Save the menu position rule and get the status for messaging.
     $status = $rule->save();
     if ($status && $is_new) {
-      $this->messenger->addMessage($this->t('Rule %label has been added.', ['%label' => $rule->getLabel()]));
+      drupal_set_message($this->t('Rule %label has been added.', ['%label' => $rule->getLabel()]));
     }
     else if ($status) {
-      $this->messenger->addMessage($this->t('Rule %label has been updated.', ['%label' => $rule->getLabel()]));
+      drupal_set_message($this->t('Rule %label has been updated.', ['%label' => $rule->getLabel()]));
     }
     else {
-      $this->messenger->addWarning($this->t('Rule %label was not saved.', ['%label' => $rule->getLabel()]));
+      drupal_set_message($this->t('Rule %label was not saved.', ['%label' => $rule->getLabel()]), 'warning');
     }
 
     // Flush appropriate menu cache.

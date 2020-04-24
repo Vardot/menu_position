@@ -5,8 +5,7 @@ namespace Drupal\menu_position\Form;
 use Drupal\Core\Entity\EntityConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Menu\MenuLinkManagerInterface;
-use Drupal\Core\Messenger\MessengerInterface;
-use Drupal\Core\Routing\RouteBuilderInterface;
+use Drupal\Core\ProxyClass\Routing\RouteBuilder;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -26,7 +25,7 @@ class MenuPositionRuleDeleteForm extends EntityConfirmFormBase {
   /**
    * The Route Builder.
    *
-   * @var \Drupal\Core\Routing\RouteBuilderInterface
+   * @var \Drupal\Core\ProxyClass\Routing\RouteBuilder
    */
   protected $route_builder;
 
@@ -35,19 +34,15 @@ class MenuPositionRuleDeleteForm extends EntityConfirmFormBase {
    *
    * @param \Drupal\Core\Menu\MenuLinkManagerInterface $menu_link_manager
    *   The menu link manager.
-   * @param \Drupal\Core\Routing\RouteBuilderInterface $route_builder
-   *   The route building service.
-   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
-   *   The messenger.
+   * @param \Drupal\Core\ProxyClass\Routing\RouteBuilder $route_builder
+   *   The route builder.
    */
   public function __construct(
     MenuLinkManagerInterface $menu_link_manager,
-    RouteBuilderInterface $route_builder,
-    MessengerInterface $messenger) {
+    RouteBuilder $route_builder) {
 
     $this->menu_link_manager = $menu_link_manager;
     $this->route_builder = $route_builder;
-    $this->messenger = $messenger;
   }
 
   /**
@@ -56,8 +51,7 @@ class MenuPositionRuleDeleteForm extends EntityConfirmFormBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('plugin.manager.menu.link'),
-      $container->get('router.builder'),
-      $container->get('messenger')
+      $container->get('router.builder')
     );
   }
 
@@ -88,7 +82,7 @@ class MenuPositionRuleDeleteForm extends EntityConfirmFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $this->menu_link_manager->removeDefinition($this->entity->getMenuLink());
     $this->entity->delete();
-    $this->messenger->addMessage($this->t('The %label rule has been deleted.', ['%label' => $this->entity->getLabel()]));
+    drupal_set_message($this->t('The %label rule has been deleted.', ['%label' => $this->entity->getLabel()]));
 
     // Flush appropriate menu cache.
     $this->route_builder->rebuild();

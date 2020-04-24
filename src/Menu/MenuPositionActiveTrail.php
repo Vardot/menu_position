@@ -3,7 +3,6 @@
 namespace Drupal\menu_position\Menu;
 
 use Drupal\Core\Cache\CacheBackendInterface;
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryFactory;
 use Drupal\Core\Entity\Query\QueryFactoryInterface;
@@ -46,11 +45,8 @@ class MenuPositionActiveTrail extends MenuActiveTrail  {
    *   The cache backend.
    * @param \Drupal\Core\Lock\LockBackendInterface $lock
    *   The lock backend.
-   * @param \Drupal\Core\Entity\Query\QueryFactory $entity_query
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
-   *   The config factory service.
    */
   public function __construct(
     MenuLinkManagerInterface $menu_link_manager,
@@ -58,13 +54,12 @@ class MenuPositionActiveTrail extends MenuActiveTrail  {
     CacheBackendInterface $cache,
     LockBackendInterface $lock,
     QueryFactory $entity_query,
-    EntityTypeManagerInterface $entity_type_manager,
-    ConfigFactoryInterface $config_factory) {
+    EntityTypeManagerInterface $entity_type_manager) {
 
     parent::__construct($menu_link_manager, $route_match, $cache, $lock);
-    $this->entityTypeManager = $entity_type_manager;
     $this->entity_query = $entity_query;
-    $this->settings = $config_factory->get('menu_position.settings');
+    $this->entityTypeManager = $entity_type_manager;
+    $this->settings = \Drupal::config('menu_position.settings');
   }
 
   /**
