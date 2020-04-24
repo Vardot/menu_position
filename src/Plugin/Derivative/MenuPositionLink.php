@@ -6,6 +6,7 @@ use Drupal\Component\Plugin\Derivative\DeriverBase;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\Discovery\ContainerDeriverInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -14,6 +15,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @see \Drupal\menu_position\Plugin\Menu\MenuPositionLink
  */
 class MenuPositionLink extends DeriverBase implements ContainerDeriverInterface {
+
+  use StringTranslationTrait;
 
   /**
    * The menu_position_rule storage.
@@ -71,7 +74,7 @@ class MenuPositionLink extends DeriverBase implements ContainerDeriverInterface 
         // Provide defaults, they will be updated by the rule.
         $definition = [
           'id' => $base_plugin_definition['id'] . ':' . $menu_position_rule->id(),
-          'title' => t('@label (menu position rule)', [
+          'title' => $this->t('@label (menu position rule)', [
             '@label' => $menu_position_rule->getLabel(),
           ]),
           'menu_name' => $menu_position_rule->getMenuName(),
