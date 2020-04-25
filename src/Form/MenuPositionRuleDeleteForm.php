@@ -13,7 +13,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Builds the form to delete a Example.
  */
-
 class MenuPositionRuleDeleteForm extends EntityConfirmFormBase {
 
   /**
@@ -95,4 +94,5 @@ class MenuPositionRuleDeleteForm extends EntityConfirmFormBase {
 
     $form_state->setRedirectUrl($this->getCancelUrl());
   }
+
 }

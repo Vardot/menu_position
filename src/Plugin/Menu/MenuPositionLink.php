@@ -50,6 +50,7 @@ class MenuPositionLink extends MenuLinkBase implements ContainerFactoryPluginInt
 
   /**
    * The route match service.
+   *
    * @var \Drupal\Core\Routing\RouteMatchInterface
    */
   protected $routeMatch;
@@ -92,9 +93,16 @@ class MenuPositionLink extends MenuLinkBase implements ContainerFactoryPluginInt
    * @param \Drupal\Core\Render\RendererInterface $renderer
    *   The renderer service.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager,
-                              ConfigFactoryInterface $config_factory, RouteMatchInterface $route_match, RequestStack $request_stack,
-                              AdminContext $admin_context, TitleResolverInterface $title_resolver, RendererInterface $renderer) {
+  public function __construct(array $configuration,
+  $plugin_id,
+  $plugin_definition,
+  EntityTypeManagerInterface $entity_type_manager,
+                              ConfigFactoryInterface $config_factory,
+  RouteMatchInterface $route_match,
+  RequestStack $request_stack,
+                              AdminContext $admin_context,
+  TitleResolverInterface $title_resolver,
+  RendererInterface $renderer) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->entityTypeManager = $entity_type_manager;
@@ -180,6 +188,9 @@ class MenuPositionLink extends MenuLinkBase implements ContainerFactoryPluginInt
     return TRUE;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function isEnabled() {
     return (bool) ($this->settings->get('link_display') === 'child');
   }
@@ -188,7 +199,7 @@ class MenuPositionLink extends MenuLinkBase implements ContainerFactoryPluginInt
    * {@inheritdoc}
    */
   public function deleteLink() {
-    // noop
+    // Noop.
   }
 
   /**
@@ -202,4 +213,3 @@ class MenuPositionLink extends MenuLinkBase implements ContainerFactoryPluginInt
   }
 
 }
-

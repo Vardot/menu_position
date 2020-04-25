@@ -10,7 +10,10 @@ use Drupal\Core\Menu\MenuActiveTrail;
 use Drupal\Core\Menu\MenuLinkManagerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 
-class MenuPositionActiveTrail extends MenuActiveTrail  {
+/**
+ * Menu Position active trail.
+ */
+class MenuPositionActiveTrail extends MenuActiveTrail {
 
   /**
    * The entity type manager.
@@ -63,7 +66,7 @@ class MenuPositionActiveTrail extends MenuActiveTrail  {
     $query = $this->entityTypeManager->getStorage('menu_position_rule')->getQuery();
 
     // Filter on the menu name if there is one.
-    if (!is_null($menu_name)) {
+    if (isset($menu_name)) {
       $query->condition('menu_name', $menu_name);
     }
 
@@ -75,22 +78,28 @@ class MenuPositionActiveTrail extends MenuActiveTrail  {
       // This rule is active.
       if ($rule->isActive()) {
         $menu_link = $this->menuLinkManager->createInstance($rule->getMenuLink());
+        $active_menu_link = NULL;
         switch ($this->settings->get('link_display')) {
           case 'child':
             // Set this menu link to active.
-            return $menu_link;
+            $active_menu_link = $menu_link;
             break;
+
           case 'parent':
-            return $this->menuLinkManager->createInstance($menu_link->getParent());
+            $active_menu_link = $this->menuLinkManager->createInstance($menu_link->getParent());
             break;
+
           case 'none':
-            return null;
+            $active_menu_link = NULL;
             break;
         }
+
+        return $active_menu_link;
       }
     }
 
     // Default implementation takes here.
     return parent::getActiveLink($menu_name);
   }
+
 }

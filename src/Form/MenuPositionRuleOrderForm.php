@@ -3,7 +3,6 @@
 namespace Drupal\menu_position\Form;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Entity\Query\QueryFactory;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Messenger\MessengerInterface;
@@ -29,7 +28,7 @@ class MenuPositionRuleOrderForm extends FormBase {
   /**
    * The menu link manager.
    *
-   * @var \Drupal\Core\Menu\MenuLinkManagerInterface.
+   * @var \Drupal\Core\Menu\MenuLinkManagerInterface
    */
   protected $menu_link_manager;
 
@@ -40,6 +39,9 @@ class MenuPositionRuleOrderForm extends FormBase {
    */
   protected $route_builder;
 
+  /**
+   * {@inheritdoc}
+   */
   public function __construct(
     MenuLinkManagerInterface $menu_link_manager,
     EntityTypeManagerInterface $entity_type_manager,
@@ -52,6 +54,9 @@ class MenuPositionRuleOrderForm extends FormBase {
     $this->messenger = $messenger;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('plugin.manager.menu.link'),
@@ -92,9 +97,9 @@ class MenuPositionRuleOrderForm extends FormBase {
       ],
       '#tabledrag' => [
         [
-         'action' => 'order',
-         'relationship' => 'sibling',
-         'group' => 'rules-weight',
+          'action' => 'order',
+          'relationship' => 'sibling',
+          'group' => 'rules-weight',
         ],
       ],
     ];
@@ -125,7 +130,7 @@ class MenuPositionRuleOrderForm extends FormBase {
           '#title' => $this->t('Weight for @title', ['@title' => $rule->getLabel()]),
           '#title_display' => 'invisible',
           '#default_value' => $rule->getWeight(),
-          '#delta' => ceil(count($rules)/2),
+          '#delta' => ceil(count($rules) / 2),
           '#attributes' => ['class' => ['rules-weight']],
         ],
         'operations' => [
@@ -181,4 +186,5 @@ class MenuPositionRuleOrderForm extends FormBase {
 
     $this->messenger->addMessage($this->t('The new rules ordering has been applied.'));
   }
+
 }

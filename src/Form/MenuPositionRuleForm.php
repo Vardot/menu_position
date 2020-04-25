@@ -5,7 +5,6 @@ namespace Drupal\menu_position\Form;
 use Drupal\Core\Condition\ConditionManager;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Entity\Query\QueryFactory;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\SubformState;
 use Drupal\Core\Menu\MenuLinkManagerInterface;
@@ -16,6 +15,9 @@ use Drupal\Core\Plugin\Context\ContextRepositoryInterface;
 use Drupal\Core\Routing\RouteBuilderInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * The Menu Position rule form.
+ */
 class MenuPositionRuleForm extends EntityForm {
 
   /**
@@ -26,7 +28,7 @@ class MenuPositionRuleForm extends EntityForm {
   protected $entity_type_manager;
 
   /**
-   * The Menu parent form selector.
+   * The menu parent form selector.
    *
    * @var \Drupal\Core\Menu\MenuParentFormSelector
    */
@@ -40,21 +42,21 @@ class MenuPositionRuleForm extends EntityForm {
   protected $menu_link_manager;
 
   /**
-   * The Condition Plugin Manager.
+   * The condition plugin manager.
    *
    * @var \Drupal\Core\Condition\ConditionManager
    */
   protected $condition_plugin_manager;
 
   /**
-   * The Context Repository.
+   * The context repository.
    *
    * @var \Drupal\Core\Plugin\Context\ContextRepositoryInterface
    */
   protected $context_repository;
 
   /**
-   * The Route Builder.
+   * The route builder.
    *
    * @var \Drupal\Core\Routing\RouteBuilderInterface
    */
@@ -117,7 +119,7 @@ class MenuPositionRuleForm extends EntityForm {
   public function form(array $form, FormStateInterface $form_state) {
     // Allow parent to construct base form, set tree value.
     $form = parent::form($form, $form_state);
-    $form['#tree'] = true;
+    $form['#tree'] = TRUE;
 
     // Set these for use when attaching condition forms.
     $form_state->setTemporaryValue('gathered_contexts', $this->context_repository->getAvailableContexts());
@@ -162,7 +164,7 @@ class MenuPositionRuleForm extends EntityForm {
       '#type' => 'select',
       '#title' => $this->t('Parent menu item'),
       '#required' => TRUE,
-      '#default_value' => (!$rule->isNew()) ? $menu_link->getMenuName() . ':' . $menu_link->getParent() : null,
+      '#default_value' => (!$rule->isNew()) ? $menu_link->getMenuName() . ':' . $menu_link->getParent() : NULL,
       '#options' => $options,
       '#description' => $this->t('Select the place in the menu where the rule should position its menu links.'),
       '#attributes' => [
@@ -187,7 +189,8 @@ class MenuPositionRuleForm extends EntityForm {
       // If this condition exists already on the rule, use that.
       if ($rule->getConditions()->has($condition_id)) {
         $condition = $rule->getConditions()->get($condition_id);
-      } else {
+      }
+      else {
         $condition = $this->condition_plugin_manager->createInstance($condition_id, []);
       }
 
@@ -326,7 +329,7 @@ class MenuPositionRuleForm extends EntityForm {
     if ($status && $is_new) {
       $this->messenger->addMessage($this->t('Rule %label has been added.', ['%label' => $rule->getLabel()]));
     }
-    else if ($status) {
+    elseif ($status) {
       $this->messenger->addMessage($this->t('Rule %label has been updated.', ['%label' => $rule->getLabel()]));
     }
     else {
@@ -343,8 +346,11 @@ class MenuPositionRuleForm extends EntityForm {
   /**
    * Returns boolean indicating whether or not this entity exists.
    *
-   * @param  string $id The id of the entity.
-   * @return bool       Whether or not the entity exists already.
+   * @param string $id
+   *   The id of the entity.
+   *
+   * @return bool
+   *   Whether or not the entity exists already.
    */
   public function exist($id) {
     $entity = $this->entityTypeManager
@@ -354,4 +360,5 @@ class MenuPositionRuleForm extends EntityForm {
       ->execute();
     return (bool) $entity;
   }
+
 }

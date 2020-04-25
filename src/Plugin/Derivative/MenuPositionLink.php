@@ -38,6 +38,7 @@ class MenuPositionLink extends DeriverBase implements ContainerDeriverInterface 
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $menu_position_rule_storage
    *   The menu_position_rule storage.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The config factory service.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
@@ -83,7 +84,8 @@ class MenuPositionLink extends DeriverBase implements ContainerDeriverInterface 
           'metadata' => [
             'entity_id' => $menu_position_rule->id(),
           ],
-          // Links are enabled (i.e. visible) depending on the modules' settings.
+          // Links are enabled (i.e. visible) depending on the modules'
+          // settings.
           'enabled' => $this->config_factory->get('menu_position.settings')->get('link_display') === 'child',
         ];
       }
