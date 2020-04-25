@@ -19,13 +19,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class MenuPositionRuleForm extends EntityForm {
 
   /**
-   * The entity query factory service.
-   *
-   * @var \Drupal\Core\Entity\Query\QueryFactory.
-   */
-  protected $entity_query;
-
-  /**
    * The entity type manager service.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
@@ -70,8 +63,6 @@ class MenuPositionRuleForm extends EntityForm {
   /**
    * The constructor for the menu position rule form.
    *
-   * @param \Drupal\Core\Entity\Query\QueryFactory $entity_query
-   *   The entity query factory service.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager service.
    * @param \Drupal\Core\Menu\MenuParentFormSelector $menu_parent_form_selector
@@ -88,7 +79,6 @@ class MenuPositionRuleForm extends EntityForm {
    *   The messenger.
    */
   public function __construct(
-    QueryFactory $entity_query,
     EntityTypeManagerInterface $entity_type_manager,
     MenuParentFormSelector $menu_parent_form_selector,
     MenuLinkManagerInterface $menu_link_manager,
@@ -97,7 +87,6 @@ class MenuPositionRuleForm extends EntityForm {
     RouteBuilderInterface $route_builder,
     MessengerInterface $messenger) {
 
-    $this->entity_query = $entity_query;
     $this->entity_type_manager = $entity_type_manager;
     $this->menu_parent_form_selector = $menu_parent_form_selector;
     $this->menu_link_manager = $menu_link_manager;
@@ -112,7 +101,6 @@ class MenuPositionRuleForm extends EntityForm {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('entity.query'),
       $container->get('entity_type.manager'),
       $container->get('menu.parent_form_selector'),
       $container->get('plugin.manager.menu.link'),
@@ -359,7 +347,9 @@ class MenuPositionRuleForm extends EntityForm {
    * @return bool       Whether or not the entity exists already.
    */
   public function exist($id) {
-    $entity = $this->entity_query->get('menu_position_rule')
+    $entity = $this->entityTypeManager
+      ->getStorage('menu_position_rule')
+      ->getQuery()
       ->condition('id', $id)
       ->execute();
     return (bool) $entity;

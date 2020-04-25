@@ -5,7 +5,6 @@ namespace Drupal\menu_position\Menu;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Entity\Query\QueryFactoryInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Menu\MenuActiveTrail;
 use Drupal\Core\Menu\MenuLinkManagerInterface;
@@ -19,13 +18,6 @@ class MenuPositionActiveTrail extends MenuActiveTrail  {
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
-
-  /**
-   * The entity query factory service.
-   *
-   * @var \Drupal\Core\Entity\Query\QueryFactoryInterface
-   */
-  protected $entity_query;
 
   /**
    * Menu position settings.
@@ -45,8 +37,6 @@ class MenuPositionActiveTrail extends MenuActiveTrail  {
    *   The cache backend service.
    * @param \Drupal\Core\Lock\LockBackendInterface $lock
    *   The lock backend service.
-   * @param \Drupal\Core\Entity\Query\QueryFactoryInterface $entity_query
-   *   The query factory service.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
@@ -57,13 +47,11 @@ class MenuPositionActiveTrail extends MenuActiveTrail  {
     RouteMatchInterface $route_match,
     CacheBackendInterface $cache,
     LockBackendInterface $lock,
-    QueryFactoryInterface $entity_query,
     EntityTypeManagerInterface $entity_type_manager,
     ConfigFactoryInterface $config_factory) {
 
     parent::__construct($menu_link_manager, $route_match, $cache, $lock);
     $this->entityTypeManager = $entity_type_manager;
-    $this->entity_query = $entity_query;
     $this->settings = $config_factory->get('menu_position.settings');
   }
 
@@ -72,7 +60,7 @@ class MenuPositionActiveTrail extends MenuActiveTrail  {
    */
   public function getActiveLink($menu_name = NULL) {
     // Get all the rules.
-    $query = $this->entity_query->get('menu_position_rule');
+    $query = $this->entityTypeManager->getStorage('menu_position_rule')->getQuery();
 
     // Filter on the menu name if there is one.
     if (!is_null($menu_name)) {

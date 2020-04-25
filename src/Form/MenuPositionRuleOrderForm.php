@@ -34,13 +34,6 @@ class MenuPositionRuleOrderForm extends FormBase {
   protected $menu_link_manager;
 
   /**
-   * The entity query factory service.
-   *
-   * @var \Drupal\Core\Entity\Query\QueryFactory
-   */
-  protected $entity_query;
-
-  /**
    * The Route Builder.
    *
    * @var \Drupal\Core\Routing\RouteBuilderInterface
@@ -48,14 +41,12 @@ class MenuPositionRuleOrderForm extends FormBase {
   protected $route_builder;
 
   public function __construct(
-    QueryFactory $entity_query,
     MenuLinkManagerInterface $menu_link_manager,
     EntityTypeManagerInterface $entity_type_manager,
     RouteBuilderInterface $route_builder,
     MessengerInterface $messenger) {
 
     $this->entityTypeManager = $entity_type_manager;
-    $this->entity_query = $entity_query;
     $this->menu_link_manager = $menu_link_manager;
     $this->route_builder = $route_builder;
     $this->messenger = $messenger;
@@ -63,7 +54,6 @@ class MenuPositionRuleOrderForm extends FormBase {
 
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('entity.query'),
       $container->get('plugin.manager.menu.link'),
       $container->get('entity_type.manager'),
       $container->get('router.builder'),
@@ -83,7 +73,7 @@ class MenuPositionRuleOrderForm extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     // Get all the rules.
-    $query = $this->entity_query->get('menu_position_rule');
+    $query = $this->entityTypeManager->getStorage('menu_position_rule')->getQuery();
     $results = $query->sort('weight')->execute();
     $rules = $this->entityTypeManager->getStorage('menu_position_rule')->loadMultiple($results);
 
