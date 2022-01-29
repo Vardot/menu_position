@@ -32,6 +32,16 @@ use Drupal\menu_position\MenuPositionRuleInterface;
  *     "edit-form" = "/admin/structure/menu-position/{menu_position_rule}/edit",
  *     "delete-form" = "/admin/structure/menu-position/{menu_position_rule}/delete",
  *     "collection" = "/admin/structure/menu-position"
+ *   },
+ *   config_export = {
+ *     "id",
+ *     "label",
+ *     "enabled",
+ *     "conditions",
+ *     "menu_name",
+ *     "parent",
+ *     "menu_link",
+ *     "weight",
  *   }
  * )
  */
