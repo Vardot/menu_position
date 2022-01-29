@@ -192,7 +192,13 @@ class MenuPositionLink extends MenuLinkBase implements ContainerFactoryPluginInt
    * {@inheritdoc}
    */
   public function isEnabled() {
-    return (bool) ($this->settings->get('link_display') === 'child');
+    if ($this->settings->get('link_display') === 'child') {
+      // Only insert into menu tree if the rule matches.
+      $rule = $this->entityTypeManager->getStorage('menu_position_rule')
+        ->load($this->pluginDefinition['metadata']['entity_id']);
+      return $rule->isActive();
+    }
+    return FALSE;
   }
 
   /**
