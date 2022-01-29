@@ -62,6 +62,10 @@ class MenuPositionActiveTrail extends MenuActiveTrail {
    * {@inheritdoc}
    */
   public function getActiveLink($menu_name = NULL) {
+    static $cache = [];
+    if (isset($cache[$menu_name])) {
+      return $cache[$menu_name];
+    }
     // Get all the rules.
     $query = $this->entityTypeManager->getStorage('menu_position_rule')->getQuery();
 
@@ -94,6 +98,7 @@ class MenuPositionActiveTrail extends MenuActiveTrail {
             break;
         }
 
+        $cache[$menu_name] = $active_menu_link;
         return $active_menu_link;
       }
     }
