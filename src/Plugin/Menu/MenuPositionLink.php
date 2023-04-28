@@ -150,7 +150,7 @@ class MenuPositionLink extends MenuLinkBase implements ContainerFactoryPluginInt
     // @todo Ensure this translates properly when using configuration
     //   translation.
     if ($this->adminContext->isAdminRoute()) {
-      return $this->pluginDefinition['title'];
+      return $this->pluginDefinition['title'] ?? "";
     }
     // When we're on a non-admin route we want to display the page title.
     else {
@@ -158,7 +158,7 @@ class MenuPositionLink extends MenuLinkBase implements ContainerFactoryPluginInt
       if (is_array($title)) {
         $title = $this->renderer->renderPlain($title);
       }
-      return $title;
+      return $title ?? $this->pluginDefinition['title'] ?? "";
     }
   }
 
