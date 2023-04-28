@@ -357,6 +357,7 @@ class MenuPositionRuleForm extends EntityForm {
       ->getStorage('menu_position_rule')
       ->getQuery()
       ->condition('id', $id)
+      ->accessCheck(FALSE)
       ->execute();
     return (bool) $entity;
   }

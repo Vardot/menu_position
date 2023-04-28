@@ -74,7 +74,7 @@ class MenuPositionActiveTrail extends MenuActiveTrail {
       $query->condition('menu_name', $menu_name);
     }
 
-    $results = $query->sort('weight')->execute();
+    $results = $query->sort('weight')->accessCheck(FALSE)->execute();
     $rules = $this->entityTypeManager->getStorage('menu_position_rule')->loadMultiple($results);
 
     // Iterate over the rules.

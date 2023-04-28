@@ -79,7 +79,7 @@ class MenuPositionRuleOrderForm extends FormBase {
   public function buildForm(array $form, FormStateInterface $form_state) {
     // Get all the rules.
     $query = $this->entityTypeManager->getStorage('menu_position_rule')->getQuery();
-    $results = $query->sort('weight')->execute();
+    $results = $query->sort('weight')->accessCheck(FALSE)->execute();
     $rules = $this->entityTypeManager->getStorage('menu_position_rule')->loadMultiple($results);
 
     // Menu Position rules order (tabledrag).
