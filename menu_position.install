@@ -1,0 +1,22 @@
+<?php
+
+/**
+ * Update node type conditions from node_type to entity_bundle.
+ */
+function menu_position_update_10001(): void {
+  foreach (Drupal::configFactory()
+             ->listAll('menu_position.menu_position_rule.') as $ruleName) {
+    $ruleConfig = Drupal::configFactory()->getEditable($ruleName);
+
+    foreach ($ruleConfig->get('conditions') as $condition) {
+      if ($condition['id'] === 'node_type') {
+        $condition['id'] = 'entity_bundle:node';
+
+        $ruleConfig->clear('conditions.node_type');
+        $ruleConfig->set('conditions.entity_bundle:node', $condition);
+        $ruleConfig->save();
+        break;
+      }
+    }
+  }
+}

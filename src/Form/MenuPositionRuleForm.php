@@ -206,12 +206,12 @@ class MenuPositionRuleForm extends EntityForm {
     }
 
     // Custom form alters for core conditions (lifted from BlockForm.php).
-    if (isset($form['conditions']['node_type'])) {
-      $form['conditions']['node_type']['#title'] = $this->t('Content types');
-      $form['conditions']['node_type']['bundles']['#title'] = $this->t('Content types');
-      $form['conditions']['node_type']['negate']['#type'] = 'value';
-      $form['conditions']['node_type']['negate']['#title_display'] = 'invisible';
-      $form['conditions']['node_type']['negate']['#value'] = $form['conditions']['node_type']['negate']['#default_value'];
+    if (isset($form['conditions']['entity_bundle:node'])) {
+      $form['conditions']['entity_bundle:node']['#title'] = $this->t('Content types');
+      $form['conditions']['entity_bundle:node']['bundles']['#title'] = $this->t('Content types');
+      $form['conditions']['entity_bundle:node']['negate']['#type'] = 'value';
+      $form['conditions']['entity_bundle:node']['negate']['#title_display'] = 'invisible';
+      $form['conditions']['entity_bundle:node']['negate']['#value'] = $form['conditions']['entity_bundle:node']['negate']['#default_value'];
     }
     if (isset($form['conditions']['user_role'])) {
       $form['conditions']['user_role']['#title'] = $this->t('Roles');
