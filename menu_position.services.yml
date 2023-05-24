@@ -2,3 +2,12 @@ services:
   plugin.manager.menu_position_condition_plugin.processor:
     class: Drupal\menu_position\Plugin\MenuPositionConditionPluginManager
     parent: default_plugin_manager
+
+  menu_position.menu.active_trail:
+    class: Drupal\menu_position\Menu\MenuPositionActiveTrail
+    public: false
+    decorates: menu.active_trail
+    decoration_priority: 9
+    arguments: [ '@menu_position.menu.active_trail.inner', '@plugin.manager.menu.link', '@current_route_match', '@cache.menu', '@lock', '@entity_type.manager', '@config.factory' ]
+    tags:
+      - { name: needs_destruction }
