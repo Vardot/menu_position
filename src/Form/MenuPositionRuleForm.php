@@ -246,7 +246,7 @@ class MenuPositionRuleForm extends EntityForm {
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
     // Don't allow the user to select a menu name instead of a menu item.
-    list($menu_name, $parent) = explode(':', $form_state->getValue('parent'));
+    list($menu_name, $parent) = array_filter(explode(':', $form_state->getValue('parent') ?? "")) ?: [NULL, NULL];
     if (empty($parent)) {
       $form_state->setErrorByName('parent', $this->t('Please select a menu item. You have selected the name of a menu.'));
     }
