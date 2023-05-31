@@ -2,6 +2,7 @@
 
 namespace Drupal\menu_position\Form;
 
+use Drupal\Component\Plugin\Exception\PluginException;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -109,14 +110,20 @@ class MenuPositionRuleOrderForm extends FormBase {
       /* @var \Drupal\menu_position\Entity\MenuPositionRule $rule */
       /* @var \Drupal\menu_position\Plugin\Menu\MenuPositionLink $menu_link */
       $menu_link = $rule->getMenuLinkPlugin();
-      $parent = $this->menu_link_manager->createInstance($menu_link->getParent());
+      try {
+        $parent = $this->menu_link_manager->createInstance($menu_link->getParent());
+        $parent_title = $parent->getTitle();
+      }
+      catch (PluginException $e) {
+        $parent_title = $this->t('Parent link missing');
+      }
       // @todo Because we're in a loop, try to cache this unless the entity
       //   manager handles all that for us. At least only get the storage once?
       $menu = $this->entityTypeManager->getStorage('menu')->load($menu_link->getMenuName());
       $form['rules'][$rule->getId()] = [
         '#attributes' => ['class' => ['draggable']],
         'title' => [
-          '#markup' => '<strong>' . $rule->getLabel() . '</strong> (' . $this->t('Positioned under: %title', ['%title' => $parent->getTitle()]) . ')',
+          '#markup' => '<strong>' . $rule->getLabel() . '</strong> (' . $this->t('Positioned under: %title', ['%title' => $parent_title]) . ')',
         ],
         'menu_name' => [
           '#markup' => $menu->label(),

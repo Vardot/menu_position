@@ -2,6 +2,7 @@
 
 namespace Drupal\menu_position\Menu;
 
+use Drupal\Component\Plugin\Exception\PluginException;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Cache\CacheCollector;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -187,7 +188,12 @@ class MenuPositionActiveTrail extends CacheCollector implements MenuActiveTrailI
             break;
 
           case 'parent':
-            $active_menu_link = $this->menuLinkManager->createInstance($menu_link->getParent());
+            try {
+              $active_menu_link = $this->menuLinkManager->createInstance($menu_link->getParent());
+            }
+            catch (PluginException $e) {
+              $active_menu_link = NULL;
+            }
             break;
 
           case 'none':
