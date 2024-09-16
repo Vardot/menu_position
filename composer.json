@@ -6,5 +6,8 @@
   "support": {
     "issues": "https://www.drupal.org/project/issues/menu_position"
   },
-  "license": "GPL-2.0-or-later"
+  "license": "GPL-2.0-or-later",
+  "require": {
+    "drupal/core": "^9 || ^10 || ^11"
+  }
 }
