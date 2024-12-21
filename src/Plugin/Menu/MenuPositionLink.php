@@ -154,11 +154,16 @@ class MenuPositionLink extends MenuLinkBase implements ContainerFactoryPluginInt
     }
     // When we're on a non-admin route we want to display the page title.
     else {
-      $title = $this->titleResolver->getTitle($this->requestStack->getCurrentRequest(), $this->routeMatch->getRouteObject());
-      if (is_array($title)) {
-        $title = $this->renderer->renderPlain($title);
+      $route = $this->routeMatch->getRouteObject();
+      if ($route) {
+        $title = $this->titleResolver->getTitle($this->requestStack->getCurrentRequest(), $route);
+        if (is_array($title)) {
+          $title = $this->renderer->renderPlain($title);
+        }
       }
-      return $title ?? $this->pluginDefinition['title'] ?? "";
+
+      // There is no current route (for example, in a Drush context).
+      return $title ?? $this->pluginDefinition['title'] ?? '';
     }
   }
 
