@@ -1,3 +1,11 @@
+menu_position.settings:
+  type: config_object
+  label: 'Menu position settings'
+  mapping:
+    link_display:
+      type: string
+      label: 'Active trail rule'
+
 menu_position.menu_position_rule.*:
   type: config_entity
   label: 'Menu position rule config'
