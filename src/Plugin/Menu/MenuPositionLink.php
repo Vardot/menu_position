@@ -93,16 +93,18 @@ class MenuPositionLink extends MenuLinkBase implements ContainerFactoryPluginInt
    * @param \Drupal\Core\Render\RendererInterface $renderer
    *   The renderer service.
    */
-  public function __construct(array $configuration,
-  $plugin_id,
-  $plugin_definition,
-  EntityTypeManagerInterface $entity_type_manager,
-                              ConfigFactoryInterface $config_factory,
-  RouteMatchInterface $route_match,
-  RequestStack $request_stack,
-                              AdminContext $admin_context,
-  TitleResolverInterface $title_resolver,
-  RendererInterface $renderer) {
+  public function __construct(
+    array $configuration,
+    $plugin_id,
+    $plugin_definition,
+    EntityTypeManagerInterface $entity_type_manager,
+    ConfigFactoryInterface $config_factory,
+    RouteMatchInterface $route_match,
+    RequestStack $request_stack,
+    AdminContext $admin_context,
+    TitleResolverInterface $title_resolver,
+    RendererInterface $renderer,
+  ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->entityTypeManager = $entity_type_manager;

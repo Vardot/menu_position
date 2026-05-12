@@ -10,7 +10,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Config\TypedConfigManagerInterface;
 
 /**
- * Class MenuPositionSettings.
+ * Configures global settings for the Menu Position module.
  *
  * @package Drupal\menu_position\Form
  */
@@ -21,7 +21,7 @@ class MenuPositionSettings extends ConfigFormBase {
    *
    * @var \Drupal\Core\Routing\RouteBuilderInterface
    */
-  protected $route_builder;
+  protected $routeBuilder;
 
   /**
    * {@inheritdoc}
@@ -29,10 +29,10 @@ class MenuPositionSettings extends ConfigFormBase {
   public function __construct(
     ConfigFactoryInterface $config_factory,
     TypedConfigManagerInterface $typed_config,
-    RouteBuilderInterface $route_builder
+    RouteBuilderInterface $route_builder,
   ) {
     parent::__construct($config_factory, $typed_config);
-    $this->route_builder = $route_builder;
+    $this->routeBuilder = $route_builder;
   }
 
   /**
@@ -93,7 +93,7 @@ class MenuPositionSettings extends ConfigFormBase {
       ->save();
 
     // Flush appropriate menu cache.
-    $this->route_builder->rebuild();
+    $this->routeBuilder->rebuild();
 
     parent::submitForm($form, $form_state);
   }

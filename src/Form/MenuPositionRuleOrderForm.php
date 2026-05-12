@@ -13,7 +13,7 @@ use Drupal\Core\Menu\MenuLinkManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class MenuPositionRuleOrderForm.
+ * Provides a form to reorder and toggle menu position rules.
  *
  * @package Drupal\menu_position\Form
  */
@@ -31,14 +31,14 @@ class MenuPositionRuleOrderForm extends FormBase {
    *
    * @var \Drupal\Core\Menu\MenuLinkManagerInterface
    */
-  protected $menu_link_manager;
+  protected $menuLinkManager;
 
   /**
    * The Route Builder.
    *
    * @var \Drupal\Core\Routing\RouteBuilderInterface
    */
-  protected $route_builder;
+  protected $routeBuilder;
 
   /**
    * {@inheritdoc}
@@ -47,11 +47,12 @@ class MenuPositionRuleOrderForm extends FormBase {
     MenuLinkManagerInterface $menu_link_manager,
     EntityTypeManagerInterface $entity_type_manager,
     RouteBuilderInterface $route_builder,
-    MessengerInterface $messenger) {
+    MessengerInterface $messenger,
+  ) {
 
     $this->entityTypeManager = $entity_type_manager;
-    $this->menu_link_manager = $menu_link_manager;
-    $this->route_builder = $route_builder;
+    $this->menuLinkManager = $menu_link_manager;
+    $this->routeBuilder = $route_builder;
     $this->messenger = $messenger;
   }
 
@@ -107,11 +108,11 @@ class MenuPositionRuleOrderForm extends FormBase {
 
     // Display table of rules.
     foreach ($rules as $rule) {
-      /* @var \Drupal\menu_position\Entity\MenuPositionRule $rule */
-      /* @var \Drupal\menu_position\Plugin\Menu\MenuPositionLink $menu_link */
+      /** @var \Drupal\menu_position\Entity\MenuPositionRule $rule */
+      /** @var \Drupal\menu_position\Plugin\Menu\MenuPositionLink $menu_link */
       $menu_link = $rule->getMenuLinkPlugin();
       try {
-        $parent = $this->menu_link_manager->createInstance($menu_link->getParent());
+        $parent = $this->menuLinkManager->createInstance($menu_link->getParent());
         $parent_title = $parent->getTitle();
       }
       catch (PluginException $e) {
@@ -189,7 +190,7 @@ class MenuPositionRuleOrderForm extends FormBase {
     }
 
     // Flush appropriate menu cache.
-    $this->route_builder->rebuild();
+    $this->routeBuilder->rebuild();
 
     $this->messenger->addMessage($this->t('The new rules ordering has been applied.'));
   }

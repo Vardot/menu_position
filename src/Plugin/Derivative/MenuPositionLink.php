@@ -30,7 +30,7 @@ class MenuPositionLink extends DeriverBase implements ContainerDeriverInterface 
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected $config_factory;
+  protected $configFactory;
 
   /**
    * Menu position link constructor.
@@ -45,7 +45,7 @@ class MenuPositionLink extends DeriverBase implements ContainerDeriverInterface 
    */
   public function __construct(EntityTypeManagerInterface $menu_position_rule_storage, ConfigFactoryInterface $config_factory) {
     $this->storage = $menu_position_rule_storage->getStorage('menu_position_rule');
-    $this->config_factory = $config_factory;
+    $this->configFactory = $config_factory;
   }
 
   /**
@@ -65,8 +65,8 @@ class MenuPositionLink extends DeriverBase implements ContainerDeriverInterface 
     // Reset the discovered definitions.
     $this->derivatives = [];
     foreach ($this->storage->loadMultiple() as $menu_position_rule) {
-      /* @var \Drupal\menu_position\Entity\MenuPositionRule $menu_position_rule */
-      /* @var \Drupal\menu_position\Plugin\Menu\MenuPositionLink $menu_link */
+      /** @var \Drupal\menu_position\Entity\MenuPositionRule $menu_position_rule */
+      /** @var \Drupal\menu_position\Plugin\Menu\MenuPositionLink $menu_link */
       if ($menu_link = $menu_position_rule->getMenuLinkPlugin()) {
         // Link already exists, use that.
         $definition = $menu_link->getPluginDefinition();
@@ -86,7 +86,7 @@ class MenuPositionLink extends DeriverBase implements ContainerDeriverInterface 
           ],
           // Links are enabled (i.e. visible) depending on the modules'
           // settings.
-          'enabled' => $this->config_factory->get('menu_position.settings')->get('link_display') === 'child',
+          'enabled' => $this->configFactory->get('menu_position.settings')->get('link_display') === 'child',
         ];
       }
       $this->derivatives[$menu_position_rule->id()] = $definition + $base_plugin_definition;

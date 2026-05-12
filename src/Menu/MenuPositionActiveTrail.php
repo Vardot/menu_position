@@ -6,7 +6,6 @@ use Drupal\Component\Plugin\Exception\PluginException;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Cache\CacheCollector;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Lock\LockBackendInterface;
@@ -26,54 +25,54 @@ class MenuPositionActiveTrail extends CacheCollector implements MenuActiveTrailI
   /**
    * The entity type manager.
    *
-   * @var EntityTypeManagerInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
 
   /**
    * Menu position settings.
    *
-   * @var ImmutableConfig
+   * @var \Drupal\Core\Config\ImmutableConfig
    */
   protected $settings;
 
   /**
    * The menu link plugin manager.
    *
-   * @var MenuLinkManagerInterface
+   * @var \Drupal\Core\Menu\MenuLinkManagerInterface
    */
   protected $menuLinkManager;
 
   /**
    * The route match object for the current page.
    *
-   * @var RouteMatchInterface
+   * @var \Drupal\Core\Routing\RouteMatchInterface
    */
   protected $routeMatch;
 
   /**
    * The decorated MenuActiveTrail service.
    *
-   * @var MenuActiveTrailInterface
+   * @var \Drupal\Core\Menu\MenuActiveTrailInterface
    */
   protected $inner;
 
   /**
    * Constructs a \Drupal\Core\Menu\MenuActiveTrail object.
    *
-   * @param MenuActiveTrailInterface $menu_active_trail
+   * @param \Drupal\Core\Menu\MenuActiveTrailInterface $menu_active_trail
    *   The menu link plugin manager.
-   * @param MenuLinkManagerInterface $menu_link_manager
+   * @param \Drupal\Core\Menu\MenuLinkManagerInterface $menu_link_manager
    *   The menu link plugin manager.
-   * @param RouteMatchInterface $route_match
+   * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
    *   A route match object for finding the active link.
-   * @param CacheBackendInterface $cache
+   * @param \Drupal\Core\Cache\CacheBackendInterface $cache
    *   The cache backend service.
-   * @param LockBackendInterface $lock
+   * @param \Drupal\Core\Lock\LockBackendInterface $lock
    *   The lock backend service.
-   * @param EntityTypeManagerInterface $entity_type_manager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
-   * @param ConfigFactoryInterface $config_factory
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory service.
    */
   public function __construct(
@@ -83,7 +82,8 @@ class MenuPositionActiveTrail extends CacheCollector implements MenuActiveTrailI
     CacheBackendInterface $cache,
     LockBackendInterface $lock,
     EntityTypeManagerInterface $entity_type_manager,
-    ConfigFactoryInterface $config_factory) {
+    ConfigFactoryInterface $config_factory,
+  ) {
     $this->inner = $menu_active_trail;
     $this->menuLinkManager = $menu_link_manager;
     $this->routeMatch = $route_match;
@@ -209,4 +209,5 @@ class MenuPositionActiveTrail extends CacheCollector implements MenuActiveTrailI
     // Default implementation takes here.
     return $this->inner->getActiveLink($menu_name);
   }
+
 }

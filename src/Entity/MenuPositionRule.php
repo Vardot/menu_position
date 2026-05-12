@@ -267,8 +267,7 @@ class MenuPositionRule extends ConfigEntityBase implements MenuPositionRuleInter
   }
 
   /**
-   * Evaluates all conditions attached to this rule and determines if this rule
-   * is "active" or not.
+   * Evaluates conditions to determine if this rule is active.
    *
    * @return bool
    *   Whether or not this rule is active.

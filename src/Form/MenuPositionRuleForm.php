@@ -21,46 +21,39 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class MenuPositionRuleForm extends EntityForm {
 
   /**
-   * The entity type manager service.
-   *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
-   */
-  protected $entity_type_manager;
-
-  /**
    * The menu parent form selector.
    *
    * @var \Drupal\Core\Menu\MenuParentFormSelector
    */
-  protected $menu_parent_form_selector;
+  protected $menuParentFormSelector;
 
   /**
    * The menu link manager.
    *
    * @var \Drupal\Core\Menu\MenuLinkManagerInterface
    */
-  protected $menu_link_manager;
+  protected $menuLinkManager;
 
   /**
    * The condition plugin manager.
    *
    * @var \Drupal\Core\Condition\ConditionManager
    */
-  protected $condition_plugin_manager;
+  protected $conditionPluginManager;
 
   /**
    * The context repository.
    *
    * @var \Drupal\Core\Plugin\Context\ContextRepositoryInterface
    */
-  protected $context_repository;
+  protected $contextRepository;
 
   /**
    * The route builder.
    *
    * @var \Drupal\Core\Routing\RouteBuilderInterface
    */
-  protected $route_builder;
+  protected $routeBuilder;
 
   /**
    * The constructor for the menu position rule form.
@@ -87,14 +80,15 @@ class MenuPositionRuleForm extends EntityForm {
     ConditionManager $condition_plugin_manager,
     ContextRepositoryInterface $context_repository,
     RouteBuilderInterface $route_builder,
-    MessengerInterface $messenger) {
+    MessengerInterface $messenger,
+  ) {
 
-    $this->entity_type_manager = $entity_type_manager;
-    $this->menu_parent_form_selector = $menu_parent_form_selector;
-    $this->menu_link_manager = $menu_link_manager;
-    $this->condition_plugin_manager = $condition_plugin_manager;
-    $this->context_repository = $context_repository;
-    $this->route_builder = $route_builder;
+    $this->entityTypeManager = $entity_type_manager;
+    $this->menuParentFormSelector = $menu_parent_form_selector;
+    $this->menuLinkManager = $menu_link_manager;
+    $this->conditionPluginManager = $condition_plugin_manager;
+    $this->contextRepository = $context_repository;
+    $this->routeBuilder = $route_builder;
     $this->messenger = $messenger;
   }
 
@@ -122,7 +116,7 @@ class MenuPositionRuleForm extends EntityForm {
     $form['#tree'] = TRUE;
 
     // Set these for use when attaching condition forms.
-    $form_state->setTemporaryValue('gathered_contexts', $this->context_repository->getAvailableContexts());
+    $form_state->setTemporaryValue('gathered_contexts', $this->contextRepository->getAvailableContexts());
 
     // Get the menu position rule entity.
     /** @var \Drupal\menu_position\Entity\MenuPositionRule $rule */
@@ -159,7 +153,7 @@ class MenuPositionRuleForm extends EntityForm {
     ];
 
     // Menu position parent menu tree item.
-    $options = $this->menu_parent_form_selector->getParentSelectOptions();
+    $options = $this->menuParentFormSelector->getParentSelectOptions();
     $form['parent'] = [
       '#type' => 'select',
       '#title' => $this->t('Parent menu item'),
@@ -185,13 +179,13 @@ class MenuPositionRuleForm extends EntityForm {
     ];
 
     // Get all available plugins from the plugin manager.
-    foreach ($this->condition_plugin_manager->getDefinitionsForContexts($form_state->getTemporaryValue('gathered_contexts')) as $condition_id => $definition) {
+    foreach ($this->conditionPluginManager->getDefinitionsForContexts($form_state->getTemporaryValue('gathered_contexts')) as $condition_id => $definition) {
       // If this condition exists already on the rule, use that.
       if ($rule->getConditions()->has($condition_id)) {
         $condition = $rule->getConditions()->get($condition_id);
       }
       else {
-        $condition = $this->condition_plugin_manager->createInstance($condition_id, []);
+        $condition = $this->conditionPluginManager->createInstance($condition_id, []);
       }
 
       // Set conditions in the form state for extraction later.
@@ -287,19 +281,19 @@ class MenuPositionRuleForm extends EntityForm {
    */
   public function save(array $form, FormStateInterface $form_state) {
     // Get menu position rule.
-    /* @var \Drupal\menu_position\Entity\MenuPositionRule $rule */
+    /** @var \Drupal\menu_position\Entity\MenuPositionRule $rule */
     $rule = $this->entity;
     $is_new = $rule->isNew();
 
     $menu_link_id = 'menu_position_link:' . $rule->id();
-    if (!$this->menu_link_manager->hasDefinition($menu_link_id)) {
+    if (!$this->menuLinkManager->hasDefinition($menu_link_id)) {
       $rule->setMenuLink($menu_link_id);
       $rule->save();
       // Let the deriver generate the menu link.
-      $this->menu_link_manager->rebuild();
+      $this->menuLinkManager->rebuild();
     }
-    $definition = $this->menu_link_manager->getDefinition($menu_link_id);
-    $this->menu_link_manager->updateDefinition($menu_link_id, [
+    $definition = $this->menuLinkManager->getDefinition($menu_link_id);
+    $this->menuLinkManager->updateDefinition($menu_link_id, [
       'menu_name' => $form_state->getValue('menu_name'),
       'parent' => $form_state->getValue('parent'),
     ] + $definition);
@@ -313,7 +307,7 @@ class MenuPositionRuleForm extends EntityForm {
 
       // Set context mapping values.
       if ($condition instanceof ContextAwarePluginInterface) {
-        $context_mapping = isset($values['context_mapping']) ? $values['context_mapping'] : [];
+        $context_mapping = $values['context_mapping'] ?? [];
         $condition->setContextMapping($context_mapping);
       }
 
@@ -337,7 +331,7 @@ class MenuPositionRuleForm extends EntityForm {
     }
 
     // Flush appropriate menu cache.
-    $this->route_builder->rebuild();
+    $this->routeBuilder->rebuild();
 
     // Redirect back to the menu position rule order form.
     $form_state->setRedirect('entity.menu_position_rule.order_form');

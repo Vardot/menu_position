@@ -20,14 +20,14 @@ class MenuPositionRuleDeleteForm extends EntityConfirmFormBase {
    *
    * @var \Drupal\Core\Menu\MenuLinkManagerInterface
    */
-  protected $menu_link_manager;
+  protected $menuLinkManager;
 
   /**
    * The Route Builder.
    *
    * @var \Drupal\Core\Routing\RouteBuilderInterface
    */
-  protected $route_builder;
+  protected $routeBuilder;
 
   /**
    * The menu position rule delete form constructor.
@@ -42,10 +42,11 @@ class MenuPositionRuleDeleteForm extends EntityConfirmFormBase {
   public function __construct(
     MenuLinkManagerInterface $menu_link_manager,
     RouteBuilderInterface $route_builder,
-    MessengerInterface $messenger) {
+    MessengerInterface $messenger,
+  ) {
 
-    $this->menu_link_manager = $menu_link_manager;
-    $this->route_builder = $route_builder;
+    $this->menuLinkManager = $menu_link_manager;
+    $this->routeBuilder = $route_builder;
     $this->messenger = $messenger;
   }
 
@@ -85,12 +86,12 @@ class MenuPositionRuleDeleteForm extends EntityConfirmFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $this->menu_link_manager->removeDefinition($this->entity->getMenuLink());
+    $this->menuLinkManager->removeDefinition($this->entity->getMenuLink());
     $this->entity->delete();
     $this->messenger->addMessage($this->t('The %label rule has been deleted.', ['%label' => $this->entity->getLabel()]));
 
     // Flush appropriate menu cache.
-    $this->route_builder->rebuild();
+    $this->routeBuilder->rebuild();
 
     $form_state->setRedirectUrl($this->getCancelUrl());
   }
