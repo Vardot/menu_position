@@ -20,7 +20,7 @@ entity.menu_position_rule.edit_form:
     _entity_form: 'menu_position_rule.default'
     _title: 'Edit Menu Position'
   requirements:
-    _permission: 'administer menu positions'
+    _entity_access: 'menu_position_rule.update'
 
 entity.menu_position_rule.delete_form:
   path: '/admin/structure/menu-position/{menu_position_rule}/delete'
@@ -28,7 +28,7 @@ entity.menu_position_rule.delete_form:
     _entity_form: 'menu_position_rule.delete'
     _title: 'Delete Menu Position'
   requirements:
-    _permission: 'administer menu positions'
+    _entity_access: 'menu_position_rule.delete'
 
 menu_position.settings:
   path: '/admin/structure/menu-position/settings'
