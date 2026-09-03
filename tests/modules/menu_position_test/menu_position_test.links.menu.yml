@@ -1,0 +1,9 @@
+menu_position_test.first_parent:
+  title: 'First parent'
+  route_name: '<front>'
+  menu_name: first
+
+menu_position_test.second_parent:
+  title: 'Second parent'
+  route_name: '<front>'
+  menu_name: second

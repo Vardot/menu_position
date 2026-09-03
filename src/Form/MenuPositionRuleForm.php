@@ -292,11 +292,6 @@ class MenuPositionRuleForm extends EntityForm {
       // Let the deriver generate the menu link.
       $this->menuLinkManager->rebuild();
     }
-    $definition = $this->menuLinkManager->getDefinition($menu_link_id);
-    $this->menuLinkManager->updateDefinition($menu_link_id, [
-      'menu_name' => $form_state->getValue('menu_name'),
-      'parent' => $form_state->getValue('parent'),
-    ] + $definition);
 
     // Submit visibility condition settings.
     foreach ($form_state->getValue('conditions') as $condition_id => $values) {

@@ -139,6 +139,7 @@ class MenuPositionLink extends MenuLinkBase implements ContainerFactoryPluginInt
    * {@inheritdoc}
    */
   protected $overrideAllowed = [
+    'menu_name' => 1,
     'parent' => 1,
     'weight' => 1,
   ];

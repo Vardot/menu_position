@@ -370,6 +370,14 @@ class MenuPositionRule extends ConfigEntityBase implements MenuPositionRuleInter
   public function postSave(EntityStorageInterface $storage, $update = TRUE) {
     parent::postSave($storage, $update);
 
+    $menu_link = $this->getMenuLink();
+    if ($menu_link && $this->menuLinkManager()->hasDefinition($menu_link)) {
+      $this->menuLinkManager()->updateDefinition($menu_link, [
+        'menu_name' => $this->getMenuName(),
+        'parent' => $this->getParent(),
+      ]);
+    }
+
     if ($this->isSyncing()) {
       // Rebuild menu position links when new rule is created.
       \Drupal::service('router.builder')->setRebuildNeeded();

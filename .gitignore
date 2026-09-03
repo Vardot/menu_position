@@ -3,5 +3,5 @@
 /recipes/
 /vendor/
 /web/
-/.gitattributes
-/phpstan.neon
+.gitattributes
+
