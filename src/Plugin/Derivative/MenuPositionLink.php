@@ -70,6 +70,10 @@ class MenuPositionLink extends DeriverBase implements ContainerDeriverInterface 
       if ($menu_link = $menu_position_rule->getMenuLinkPlugin()) {
         // Link already exists, use that.
         $definition = $menu_link->getPluginDefinition();
+        // Parent deletion can move the stored link. Restore the configured
+        // location when rebuilding, including after the parent is recreated.
+        $definition['menu_name'] = $menu_position_rule->getMenuName();
+        $definition['parent'] = $menu_position_rule->getParent();
       }
       else {
         // Provide defaults, they will be updated by the rule.
