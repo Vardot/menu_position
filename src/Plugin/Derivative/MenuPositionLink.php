@@ -26,7 +26,7 @@ class MenuPositionLink extends DeriverBase implements ContainerDeriverInterface 
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, $base_plugin_id) {
+  public static function create(ContainerInterface $container, $base_plugin_id): static {
     return new static(
       $container->get('entity_type.manager'),
       $container->get('config.factory')
@@ -36,7 +36,7 @@ class MenuPositionLink extends DeriverBase implements ContainerDeriverInterface 
   /**
    * {@inheritdoc}
    */
-  public function getDerivativeDefinitions($base_plugin_definition) {
+  public function getDerivativeDefinitions($base_plugin_definition): array {
     // Reset the discovered definitions.
     $this->derivatives = [];
     foreach ($this->entityTypeManager->getStorage('menu_position_rule')->loadMultiple() as $menu_position_rule) {

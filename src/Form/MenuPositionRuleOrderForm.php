@@ -61,14 +61,14 @@ class MenuPositionRuleOrderForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'menu_position_rule_order_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     // Get all the rules.
     $query = $this->entityTypeManager->getStorage('menu_position_rule')->getQuery();
     $results = $query->sort('weight')->accessCheck(FALSE)->execute();

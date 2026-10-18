@@ -10,6 +10,7 @@ use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Menu\MenuActiveTrailInterface;
+use Drupal\Core\Menu\MenuLinkInterface;
 use Drupal\Core\Menu\MenuLinkManagerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -102,7 +103,7 @@ class MenuPositionActiveTrail extends CacheCollector implements MenuActiveTrailI
    *
    * @see ::getActiveTrailIds()
    */
-  protected function getCid() {
+  protected function getCid(): string {
     if (!isset($this->cid)) {
       $route_parameters = $this->routeMatch->getRawParameters()->all();
       ksort($route_parameters);
@@ -117,7 +118,7 @@ class MenuPositionActiveTrail extends CacheCollector implements MenuActiveTrailI
    *
    * @see ::getActiveTrailIds()
    */
-  protected function resolveCacheMiss($menu_name) {
+  protected function resolveCacheMiss($menu_name): mixed {
     $this->storage[$menu_name] = $this->doGetActiveTrailIds($menu_name);
     $this->tags[] = 'config:system.menu.' . $menu_name;
     $this->persist($menu_name);
@@ -138,7 +139,7 @@ class MenuPositionActiveTrail extends CacheCollector implements MenuActiveTrailI
    * @see \Drupal\Core\Cache\CacheCollectorInterface
    * @see CacheCollector
    */
-  public function getActiveTrailIds($menu_name) {
+  public function getActiveTrailIds($menu_name): array {
     return $this->get($menu_name);
   }
 
@@ -164,7 +165,7 @@ class MenuPositionActiveTrail extends CacheCollector implements MenuActiveTrailI
   /**
    * {@inheritdoc}
    */
-  public function getActiveLink($menu_name = NULL) {
+  public function getActiveLink($menu_name = NULL): ?MenuLinkInterface {
     static $cache = [];
     if (isset($cache[$menu_name])) {
       return $cache[$menu_name];

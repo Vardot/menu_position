@@ -270,7 +270,7 @@ class MenuPositionRuleForm extends EntityForm {
   /**
    * {@inheritdoc}
    */
-  public function save(array $form, FormStateInterface $form_state) {
+  public function save(array $form, FormStateInterface $form_state): int {
     // Get menu position rule.
     /** @var \Drupal\menu_position\Entity\MenuPositionRule $rule */
     $rule = $this->entity;

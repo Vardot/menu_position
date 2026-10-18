@@ -10,6 +10,7 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Routing\AdminContext;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -46,7 +47,7 @@ class MenuPositionLink extends MenuLinkBase implements ContainerFactoryPluginInt
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
     return new static(
       $configuration,
       $plugin_id,
@@ -106,7 +107,7 @@ class MenuPositionLink extends MenuLinkBase implements ContainerFactoryPluginInt
   /**
    * {@inheritdoc}
    */
-  public function updateLink(array $new_definition_values, $persist) {
+  public function updateLink(array $new_definition_values, $persist): array {
     // Filter the list of updates to only those that are allowed.
     $overrides = array_intersect_key($new_definition_values, $this->overrideAllowed);
     // Update the definition.
@@ -118,14 +119,14 @@ class MenuPositionLink extends MenuLinkBase implements ContainerFactoryPluginInt
   /**
    * {@inheritdoc}
    */
-  public function isDeletable() {
+  public function isDeletable(): bool {
     return TRUE;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function isEnabled() {
+  public function isEnabled(): bool {
     if ($this->settings->get('link_display') === 'child') {
       // Only insert into menu tree if the rule matches.
       $rule = $this->entityTypeManager->getStorage('menu_position_rule')
@@ -145,7 +146,7 @@ class MenuPositionLink extends MenuLinkBase implements ContainerFactoryPluginInt
   /**
    * {@inheritdoc}
    */
-  public function getEditRoute() {
+  public function getEditRoute(): ?Url {
     $storage = $this->entityTypeManager->getStorage('menu_position_rule');
     $entity_id = $this->pluginDefinition['metadata']['entity_id'];
     $entity = $storage->load($entity_id);

@@ -185,7 +185,7 @@ class MenuPositionRule extends ConfigEntityBase implements MenuPositionRuleInter
   /**
    * {@inheritdoc}
    */
-  public function label() {
+  public function label(): string|TranslatableMarkup|null {
     return $this->label;
   }
 
@@ -286,7 +286,7 @@ class MenuPositionRule extends ConfigEntityBase implements MenuPositionRuleInter
   /**
    * {@inheritdoc}
    */
-  public function getPluginCollections() {
+  public function getPluginCollections(): array {
     return [
       'conditions' => $this->getConditions(),
     ];
