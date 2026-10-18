@@ -8,7 +8,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\SubformState;
 use Drupal\Core\Menu\MenuLinkManagerInterface;
-use Drupal\Core\Menu\MenuParentFormSelector;
+use Drupal\Core\Menu\MenuParentFormSelectorInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Plugin\ContextAwarePluginInterface;
 use Drupal\Core\Plugin\Context\ContextRepositoryInterface;
@@ -23,7 +23,7 @@ class MenuPositionRuleForm extends EntityForm {
   /**
    * The menu parent form selector.
    *
-   * @var \Drupal\Core\Menu\MenuParentFormSelector
+   * @var \Drupal\Core\Menu\MenuParentFormSelectorInterface
    */
   protected $menuParentFormSelector;
 
@@ -60,7 +60,7 @@ class MenuPositionRuleForm extends EntityForm {
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager service.
-   * @param \Drupal\Core\Menu\MenuParentFormSelector $menu_parent_form_selector
+   * @param \Drupal\Core\Menu\MenuParentFormSelectorInterface $menu_parent_form_selector
    *   The menu parent form selector.
    * @param \Drupal\Core\Menu\MenuLinkManagerInterface $menu_link_manager
    *   The menu link manager.
@@ -75,7 +75,7 @@ class MenuPositionRuleForm extends EntityForm {
    */
   public function __construct(
     EntityTypeManagerInterface $entity_type_manager,
-    MenuParentFormSelector $menu_parent_form_selector,
+    MenuParentFormSelectorInterface $menu_parent_form_selector,
     MenuLinkManagerInterface $menu_link_manager,
     ConditionManager $condition_plugin_manager,
     ContextRepositoryInterface $context_repository,
