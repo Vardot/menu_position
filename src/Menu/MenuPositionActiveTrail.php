@@ -12,6 +12,8 @@ use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Menu\MenuActiveTrailInterface;
 use Drupal\Core\Menu\MenuLinkManagerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\DependencyInjection\Attribute\AutowireDecorated;
 
 /**
  * Menu Position active trail.
@@ -76,10 +78,13 @@ class MenuPositionActiveTrail extends CacheCollector implements MenuActiveTrailI
    *   The config factory service.
    */
   public function __construct(
+    #[AutowireDecorated]
     MenuActiveTrailInterface $menu_active_trail,
     MenuLinkManagerInterface $menu_link_manager,
     RouteMatchInterface $route_match,
+    #[Autowire(service: 'cache.menu')]
     CacheBackendInterface $cache,
+    #[Autowire(service: 'lock')]
     LockBackendInterface $lock,
     EntityTypeManagerInterface $entity_type_manager,
     ConfigFactoryInterface $config_factory,

@@ -3,12 +3,16 @@
 namespace Drupal\Tests\menu_position\Kernel;
 
 use Drupal\KernelTests\KernelTestBase;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
  * Tests updating a menu position rule through configuration import.
  *
  * @group menu_position
  */
+#[Group('menu_position')]
+#[RunTestsInSeparateProcesses]
 class MenuPositionRuleConfigImportTest extends KernelTestBase {
 
   /**

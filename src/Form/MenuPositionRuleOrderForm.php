@@ -3,6 +3,7 @@
 namespace Drupal\menu_position\Form;
 
 use Drupal\Component\Plugin\Exception\PluginException;
+use Drupal\Core\DependencyInjection\AutowireTrait;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -10,7 +11,6 @@ use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Routing\RouteBuilderInterface;
 use Drupal\Core\Url;
 use Drupal\Core\Menu\MenuLinkManagerInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides a form to reorder and toggle menu position rules.
@@ -18,6 +18,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @package Drupal\menu_position\Form
  */
 class MenuPositionRuleOrderForm extends FormBase {
+
+  use AutowireTrait;
 
   /**
    * The entity type manager.
@@ -54,18 +56,6 @@ class MenuPositionRuleOrderForm extends FormBase {
     $this->menuLinkManager = $menu_link_manager;
     $this->routeBuilder = $route_builder;
     $this->messenger = $messenger;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('plugin.manager.menu.link'),
-      $container->get('entity_type.manager'),
-      $container->get('router.builder'),
-      $container->get('messenger')
-    );
   }
 
   /**

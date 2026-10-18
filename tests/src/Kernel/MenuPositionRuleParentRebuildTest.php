@@ -9,11 +9,15 @@ use Drupal\menu_link_content\Entity\MenuLinkContent;
 use Drupal\menu_position\Entity\MenuPositionRule;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
  * Tests restoring a rule's parent after menu links are recreated.
+ *
+ * @group menu_position
  */
 #[Group('menu_position')]
+#[RunTestsInSeparateProcesses]
 class MenuPositionRuleParentRebuildTest extends KernelTestBase {
 
   /**
@@ -40,6 +44,8 @@ class MenuPositionRuleParentRebuildTest extends KernelTestBase {
 
   /**
    * Tests rebuilding after rollback and reimport without saving rule config.
+   *
+   * @dataProvider parentLocationProvider
    */
   #[DataProvider('parentLocationProvider')]
   public function testRebuildRestoresRecreatedParent(bool $nested_parent): void {

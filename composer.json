@@ -8,11 +8,10 @@
     },
     "license": "GPL-2.0-or-later",
     "require": {
-        "drupal/core": "^9 || ^10 || ^11"
+        "drupal/core": "^10.3 || ^11 || ^12"
     },
     "require-dev": {
-        "drupal/coder": "^8.3.16",
-        "drush/drush": "^12.5 || ^13.3"
+        "drush/drush": "^12.5 || ^13.3 || ^14"
     },
     "config": {
         "sort-packages": true,

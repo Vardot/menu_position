@@ -18,35 +18,10 @@ class MenuPositionLink extends DeriverBase implements ContainerDeriverInterface 
 
   use StringTranslationTrait;
 
-  /**
-   * The menu_position_rule storage.
-   *
-   * @var \Drupal\Core\Entity\EntityStorageInterface
-   */
-  protected $storage;
-
-  /**
-   * The config factory service.
-   *
-   * @var \Drupal\Core\Config\ConfigFactoryInterface
-   */
-  protected $configFactory;
-
-  /**
-   * Menu position link constructor.
-   *
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $menu_position_rule_storage
-   *   The menu_position_rule storage.
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
-   *   The config factory service.
-   *
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
-   */
-  public function __construct(EntityTypeManagerInterface $menu_position_rule_storage, ConfigFactoryInterface $config_factory) {
-    $this->storage = $menu_position_rule_storage->getStorage('menu_position_rule');
-    $this->configFactory = $config_factory;
-  }
+  public function __construct(
+    protected EntityTypeManagerInterface $entityTypeManager,
+    protected ConfigFactoryInterface $configFactory,
+  ) {}
 
   /**
    * {@inheritdoc}
@@ -64,7 +39,7 @@ class MenuPositionLink extends DeriverBase implements ContainerDeriverInterface 
   public function getDerivativeDefinitions($base_plugin_definition) {
     // Reset the discovered definitions.
     $this->derivatives = [];
-    foreach ($this->storage->loadMultiple() as $menu_position_rule) {
+    foreach ($this->entityTypeManager->getStorage('menu_position_rule')->loadMultiple() as $menu_position_rule) {
       /** @var \Drupal\menu_position\Entity\MenuPositionRule $menu_position_rule */
       /** @var \Drupal\menu_position\Plugin\Menu\MenuPositionLink $menu_link */
       if ($menu_link = $menu_position_rule->getMenuLinkPlugin()) {

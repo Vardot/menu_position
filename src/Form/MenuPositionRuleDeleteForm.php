@@ -2,18 +2,20 @@
 
 namespace Drupal\menu_position\Form;
 
+use Drupal\Core\DependencyInjection\AutowireTrait;
 use Drupal\Core\Entity\EntityConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Menu\MenuLinkManagerInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Routing\RouteBuilderInterface;
 use Drupal\Core\Url;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Builds the form to delete a Example.
  */
 class MenuPositionRuleDeleteForm extends EntityConfirmFormBase {
+
+  use AutowireTrait;
 
   /**
    * The Menu Parent Form Selector.
@@ -48,17 +50,6 @@ class MenuPositionRuleDeleteForm extends EntityConfirmFormBase {
     $this->menuLinkManager = $menu_link_manager;
     $this->routeBuilder = $route_builder;
     $this->messenger = $messenger;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('plugin.manager.menu.link'),
-      $container->get('router.builder'),
-      $container->get('messenger')
-    );
   }
 
   /**

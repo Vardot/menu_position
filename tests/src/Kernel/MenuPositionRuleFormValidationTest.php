@@ -10,11 +10,15 @@ use Drupal\menu_link_content\Entity\MenuLinkContent;
 use Drupal\menu_position\Entity\MenuPositionRule;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
  * Tests the validation of the menu position rule form.
+ *
+ * @group menu_position
  */
 #[Group('menu_position')]
+#[RunTestsInSeparateProcesses]
 class MenuPositionRuleFormValidationTest extends KernelTestBase {
 
   /**
@@ -50,6 +54,8 @@ class MenuPositionRuleFormValidationTest extends KernelTestBase {
 
   /**
    * Tests that the form accepts only a menu item as the parent.
+   *
+   * @dataProvider parentProvider
    */
   #[DataProvider('parentProvider')]
   public function testParentValidation(string $parent, bool $expect_error): void {

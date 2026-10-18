@@ -2,4 +2,3 @@ name: 'Menu Position Test'
 type: module
 description: 'Support module for Menu Position tests.'
 package: Testing
-core_version_requirement: ^9 || ^10 || ^11

@@ -27,3 +27,6 @@ variables:
   # Enforce PHPCS: fail the pipeline on coding standard violations rather than
   # allowing the job to soft-fail.
   _PHPCS_ALLOW_FAILURE: '0'
+  # Test the previous and next Drupal major versions as well as the current.
+  OPT_IN_TEST_PREVIOUS_MAJOR: '1'
+  OPT_IN_TEST_NEXT_MAJOR: '1'

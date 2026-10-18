@@ -3,6 +3,7 @@
 namespace Drupal\menu_position\Form;
 
 use Drupal\Core\Condition\ConditionManager;
+use Drupal\Core\DependencyInjection\AutowireTrait;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -13,12 +14,14 @@ use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Plugin\ContextAwarePluginInterface;
 use Drupal\Core\Plugin\Context\ContextRepositoryInterface;
 use Drupal\Core\Routing\RouteBuilderInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
  * The Menu Position rule form.
  */
 class MenuPositionRuleForm extends EntityForm {
+
+  use AutowireTrait;
 
   /**
    * The menu parent form selector.
@@ -77,6 +80,7 @@ class MenuPositionRuleForm extends EntityForm {
     EntityTypeManagerInterface $entity_type_manager,
     MenuParentFormSelectorInterface $menu_parent_form_selector,
     MenuLinkManagerInterface $menu_link_manager,
+    #[Autowire(service: 'plugin.manager.condition')]
     ConditionManager $condition_plugin_manager,
     ContextRepositoryInterface $context_repository,
     RouteBuilderInterface $route_builder,
@@ -90,21 +94,6 @@ class MenuPositionRuleForm extends EntityForm {
     $this->contextRepository = $context_repository;
     $this->routeBuilder = $route_builder;
     $this->messenger = $messenger;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('entity_type.manager'),
-      $container->get('menu.parent_form_selector'),
-      $container->get('plugin.manager.menu.link'),
-      $container->get('plugin.manager.condition'),
-      $container->get('context.repository'),
-      $container->get('router.builder'),
-      $container->get('messenger')
-    );
   }
 
   /**
@@ -332,6 +321,8 @@ class MenuPositionRuleForm extends EntityForm {
 
     // Redirect back to the menu position rule order form.
     $form_state->setRedirect('entity.menu_position_rule.order_form');
+
+    return $status;
   }
 
   /**

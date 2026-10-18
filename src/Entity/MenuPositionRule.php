@@ -4,9 +4,14 @@ namespace Drupal\menu_position\Entity;
 
 use Drupal\Core\Condition\ConditionPluginCollection;
 use Drupal\Core\Config\Entity\ConfigEntityBase;
+use Drupal\Core\Entity\Attribute\ConfigEntityType;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityWithPluginCollectionInterface;
 use Drupal\Core\Plugin\ContextAwarePluginInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\menu_position\Controller\MenuPositionRuleListBuilder;
+use Drupal\menu_position\Form\MenuPositionRuleDeleteForm;
+use Drupal\menu_position\Form\MenuPositionRuleForm;
 use Drupal\menu_position\MenuPositionRuleInterface;
 
 /**
@@ -45,6 +50,38 @@ use Drupal\menu_position\MenuPositionRuleInterface;
  *   }
  * )
  */
+#[ConfigEntityType(
+  id: 'menu_position_rule',
+  label: new TranslatableMarkup('Menu Position Rule'),
+  config_prefix: 'menu_position_rule',
+  entity_keys: [
+    'id' => 'id',
+  ],
+  handlers: [
+    'list_builder' => MenuPositionRuleListBuilder::class,
+    'form' => [
+      'default' => MenuPositionRuleForm::class,
+      'delete' => MenuPositionRuleDeleteForm::class,
+    ],
+  ],
+  links: [
+    'add-form' => '/admin/structure/menu-position/add',
+    'edit-form' => '/admin/structure/menu-position/{menu_position_rule}/edit',
+    'delete-form' => '/admin/structure/menu-position/{menu_position_rule}/delete',
+    'collection' => '/admin/structure/menu-position',
+  ],
+  admin_permission: 'administer menu positions',
+  config_export: [
+    'id',
+    'label',
+    'enabled',
+    'conditions',
+    'menu_name',
+    'parent',
+    'menu_link',
+    'weight',
+  ],
+)]
 class MenuPositionRule extends ConfigEntityBase implements MenuPositionRuleInterface, EntityWithPluginCollectionInterface {
 
   /**
