@@ -7,3 +7,7 @@ services:
     autowire: true
     tags:
       - { name: needs_destruction }
+
+  Drupal\menu_position\Hook\MenuPositionHooks:
+    class: Drupal\menu_position\Hook\MenuPositionHooks
+    autowire: true
