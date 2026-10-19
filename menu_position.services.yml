@@ -1,7 +1,6 @@
 services:
   menu_position.menu.active_trail:
     class: Drupal\menu_position\Menu\MenuPositionActiveTrail
-    public: false
     decorates: menu.active_trail
     decoration_priority: 9
     autowire: true

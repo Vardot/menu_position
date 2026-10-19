@@ -2,6 +2,7 @@
 
 namespace Drupal\menu_position\Entity;
 
+use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 use Drupal\Core\Condition\ConditionPluginCollection;
 use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\Core\Entity\Attribute\ConfigEntityType;
@@ -306,10 +307,14 @@ class MenuPositionRule extends ConfigEntityBase implements MenuPositionRuleInter
   /**
    * Evaluates conditions to determine if this rule is active.
    *
+   * @param \Drupal\Core\Cache\RefinableCacheableDependencyInterface|null $cacheability
+   *   (optional) Collects the cacheability of the conditions that the rule
+   *   examines to find the result.
+   *
    * @return bool
    *   Whether or not this rule is active.
    */
-  public function isActive() {
+  public function isActive(?RefinableCacheableDependencyInterface $cacheability = NULL) {
     // Must be enabled.
     if (!$this->getEnabled()) {
       return FALSE;
@@ -333,10 +338,20 @@ class MenuPositionRule extends ConfigEntityBase implements MenuPositionRuleInter
           }
           // Does not have context but is required means this rule is inactive.
           elseif ($condition_contexts[$name]->isRequired()) {
+            // Collect the cacheability of the missing context, because the
+            // result also changes with that context.
+            if (isset($runtime_contexts[$context])) {
+              $cacheability?->addCacheableDependency($runtime_contexts[$context]);
+            }
+            else {
+              $cacheability?->mergeCacheMaxAge(0);
+            }
             return FALSE;
           }
         }
       }
+
+      $cacheability?->addCacheableDependency($condition);
 
       // If this condition evaluates to false, rule is inactive.
       if (!$condition->execute()) {
