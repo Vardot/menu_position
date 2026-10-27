@@ -13,7 +13,6 @@ use Drupal\Core\Menu\MenuParentFormSelectorInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Plugin\ContextAwarePluginInterface;
 use Drupal\Core\Plugin\Context\ContextRepositoryInterface;
-use Drupal\Core\Routing\RouteBuilderInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
@@ -52,13 +51,6 @@ class MenuPositionRuleForm extends EntityForm {
   protected $contextRepository;
 
   /**
-   * The route builder.
-   *
-   * @var \Drupal\Core\Routing\RouteBuilderInterface
-   */
-  protected $routeBuilder;
-
-  /**
    * The constructor for the menu position rule form.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
@@ -71,8 +63,6 @@ class MenuPositionRuleForm extends EntityForm {
    *   The condition plugin manager.
    * @param \Drupal\Core\Plugin\Context\ContextRepositoryInterface $context_repository
    *   The context repository.
-   * @param \Drupal\Core\Routing\RouteBuilderInterface $route_builder
-   *   The route building service.
    * @param \Drupal\Core\Messenger\MessengerInterface $messenger
    *   The messenger.
    */
@@ -83,7 +73,6 @@ class MenuPositionRuleForm extends EntityForm {
     #[Autowire(service: 'plugin.manager.condition')]
     ConditionManager $condition_plugin_manager,
     ContextRepositoryInterface $context_repository,
-    RouteBuilderInterface $route_builder,
     MessengerInterface $messenger,
   ) {
 
@@ -92,7 +81,6 @@ class MenuPositionRuleForm extends EntityForm {
     $this->menuLinkManager = $menu_link_manager;
     $this->conditionPluginManager = $condition_plugin_manager;
     $this->contextRepository = $context_repository;
-    $this->routeBuilder = $route_builder;
     $this->messenger = $messenger;
   }
 
@@ -280,8 +268,6 @@ class MenuPositionRuleForm extends EntityForm {
     if (!$this->menuLinkManager->hasDefinition($menu_link_id)) {
       $rule->setMenuLink($menu_link_id);
       $rule->save();
-      // Let the deriver generate the menu link.
-      $this->menuLinkManager->rebuild();
     }
 
     // Submit visibility condition settings.
@@ -315,9 +301,6 @@ class MenuPositionRuleForm extends EntityForm {
     else {
       $this->messenger->addWarning($this->t('Rule %label was not saved.', ['%label' => $rule->getLabel()]));
     }
-
-    // Flush appropriate menu cache.
-    $this->routeBuilder->rebuild();
 
     // Redirect back to the menu position rule order form.
     $form_state->setRedirect('entity.menu_position_rule.order_form');

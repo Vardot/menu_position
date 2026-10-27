@@ -417,17 +417,27 @@ class MenuPositionRule extends ConfigEntityBase implements MenuPositionRuleInter
   }
 
   /**
-   * Rebuild routes to create menu links.
+   * Synchronizes the rule's menu link after saving.
    */
   public function postSave(EntityStorageInterface $storage, $update = TRUE) {
     parent::postSave($storage, $update);
 
     $menu_link = $this->getMenuLink();
-    if ($menu_link && $this->menuLinkManager()->hasDefinition($menu_link)) {
+    if (!$menu_link) {
+      return;
+    }
+
+    if ($this->menuLinkManager()->hasDefinition($menu_link)) {
       $this->menuLinkManager()->updateDefinition($menu_link, [
         'menu_name' => $this->getMenuName(),
         'parent' => $this->getParent(),
       ]);
+    }
+    elseif (!$this->isSyncing()) {
+      $definitions = $this->menuLinkManager()->getDefinitions();
+      if (isset($definitions[$menu_link])) {
+        $this->menuLinkManager()->addDefinition($menu_link, $definitions[$menu_link]);
+      }
     }
 
     if ($this->isSyncing()) {

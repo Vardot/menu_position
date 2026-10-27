@@ -10,3 +10,9 @@ services:
   Drupal\menu_position\Hook\MenuPositionHooks:
     class: Drupal\menu_position\Hook\MenuPositionHooks
     autowire: true
+
+  Drupal\menu_position\EventSubscriber\MenuPositionSettingsSubscriber:
+    class: Drupal\menu_position\EventSubscriber\MenuPositionSettingsSubscriber
+    autowire: true
+    tags:
+      - { name: event_subscriber }

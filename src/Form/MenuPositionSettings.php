@@ -2,12 +2,8 @@
 
 namespace Drupal\menu_position\Form;
 
-use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\DependencyInjection\AutowireTrait;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Routing\RouteBuilderInterface;
-use Drupal\Core\Config\TypedConfigManagerInterface;
 
 /**
  * Configures global settings for the Menu Position module.
@@ -15,27 +11,6 @@ use Drupal\Core\Config\TypedConfigManagerInterface;
  * @package Drupal\menu_position\Form
  */
 class MenuPositionSettings extends ConfigFormBase {
-
-  use AutowireTrait;
-
-  /**
-   * The Route Builder.
-   *
-   * @var \Drupal\Core\Routing\RouteBuilderInterface
-   */
-  protected $routeBuilder;
-
-  /**
-   * {@inheritdoc}
-   */
-  public function __construct(
-    ConfigFactoryInterface $config_factory,
-    TypedConfigManagerInterface $typed_config,
-    RouteBuilderInterface $route_builder,
-  ) {
-    parent::__construct($config_factory, $typed_config);
-    $this->routeBuilder = $route_builder;
-  }
 
   /**
    * {@inheritdoc}
@@ -82,9 +57,6 @@ class MenuPositionSettings extends ConfigFormBase {
     $this->config('menu_position.settings')
       ->set('link_display', $form_state->getValue('menu_position_active_link_display'))
       ->save();
-
-    // Flush appropriate menu cache.
-    $this->routeBuilder->rebuild();
 
     parent::submitForm($form, $form_state);
   }

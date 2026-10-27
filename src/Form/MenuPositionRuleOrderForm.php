@@ -8,7 +8,6 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Messenger\MessengerInterface;
-use Drupal\Core\Routing\RouteBuilderInterface;
 use Drupal\Core\Url;
 use Drupal\Core\Menu\MenuLinkManagerInterface;
 
@@ -36,25 +35,16 @@ class MenuPositionRuleOrderForm extends FormBase {
   protected $menuLinkManager;
 
   /**
-   * The Route Builder.
-   *
-   * @var \Drupal\Core\Routing\RouteBuilderInterface
-   */
-  protected $routeBuilder;
-
-  /**
    * {@inheritdoc}
    */
   public function __construct(
     MenuLinkManagerInterface $menu_link_manager,
     EntityTypeManagerInterface $entity_type_manager,
-    RouteBuilderInterface $route_builder,
     MessengerInterface $messenger,
   ) {
 
     $this->entityTypeManager = $entity_type_manager;
     $this->menuLinkManager = $menu_link_manager;
-    $this->routeBuilder = $route_builder;
     $this->messenger = $messenger;
   }
 
@@ -178,9 +168,6 @@ class MenuPositionRuleOrderForm extends FormBase {
       $rule->setWeight((float) $value['weight']);
       $storage->save($rule);
     }
-
-    // Flush appropriate menu cache.
-    $this->routeBuilder->rebuild();
 
     $this->messenger->addMessage($this->t('The new rules ordering has been applied.'));
   }

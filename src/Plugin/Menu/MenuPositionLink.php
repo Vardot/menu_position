@@ -69,10 +69,14 @@ class MenuPositionLink extends MenuLinkBase implements ContainerFactoryPluginInt
     'menu_name' => 1,
     'parent' => 1,
     'weight' => 1,
+    'enabled' => 1,
   ];
 
   /**
    * {@inheritdoc}
+   *
+   * @return string|\Stringable
+   *   The localized page title or rule label.
    */
   public function getTitle() {
     // When we're in an admin route we want to display the name of the menu
@@ -99,9 +103,25 @@ class MenuPositionLink extends MenuLinkBase implements ContainerFactoryPluginInt
 
   /**
    * {@inheritdoc}
+   *
+   * @return string|\Stringable
+   *   The link description.
    */
   public function getDescription() {
     return $this->getPluginDefinition()['description'];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getUrlObject($title_attribute = TRUE): Url {
+    $url = parent::getUrlObject($title_attribute);
+    if (!$this->routeMatch->getRouteObject()) {
+      return $url;
+    }
+
+    // Menu tree access checks need the actual route, not '<current>'.
+    return Url::fromRouteMatch($this->routeMatch)->setOptions($url->getOptions());
   }
 
   /**
