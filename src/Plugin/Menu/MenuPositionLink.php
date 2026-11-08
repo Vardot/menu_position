@@ -161,7 +161,11 @@ class MenuPositionLink extends MenuLinkBase implements ContainerFactoryPluginInt
       if ($route) {
         $title = $this->titleResolver->getTitle($this->requestStack->getCurrentRequest(), $route);
         if (is_array($title)) {
-          $title = $this->renderer->renderPlain($title);
+          // renderInIsolation() replaced renderPlain() in Drupal 10.3.
+          $title = method_exists($this->renderer, 'renderInIsolation')
+            ? $this->renderer->renderInIsolation($title)
+            // @phpstan-ignore method.deprecated
+            : $this->renderer->renderPlain($title);
         }
       }
 

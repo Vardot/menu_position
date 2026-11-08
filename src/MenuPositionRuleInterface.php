@@ -102,7 +102,7 @@ interface MenuPositionRuleInterface extends ConfigEntityInterface {
   /**
    * Sets the menu item.
    *
-   * @return string
+   * @param string $menu_link
    *   The menu link id.
    */
   public function setMenuLink($menu_link);
@@ -110,7 +110,7 @@ interface MenuPositionRuleInterface extends ConfigEntityInterface {
   /**
    * Sets the menu name.
    *
-   * @return string
+   * @param string $menu_name
    *   The menu name.
    */
   public function setMenuName($menu_name);
@@ -118,7 +118,7 @@ interface MenuPositionRuleInterface extends ConfigEntityInterface {
   /**
    * Sets the parent link id.
    *
-   * @return string
+   * @param string $parent
    *   The parent menu link id.
    */
   public function setParent($parent);

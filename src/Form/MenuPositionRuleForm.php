@@ -332,6 +332,8 @@ class MenuPositionRuleForm extends EntityForm {
 
     // Redirect back to the menu position rule order form.
     $form_state->setRedirect('entity.menu_position_rule.order_form');
+
+    return $status;
   }
 
   /**

@@ -1,0 +1,7 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Storing entity storage as a class property is not recommended\. Call Drupal\\Core\\Entity\\EntityTypeManagerInterface\:\:getStorage\(\) at the call\-site instead\.$#'
+			identifier: drupal.entityStoragePropertyAssignment
+			count: 1
+			path: src/Plugin/Derivative/MenuPositionLink.php
